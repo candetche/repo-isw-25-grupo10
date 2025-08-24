@@ -8,13 +8,10 @@ Link del repositorio: https://github.com/candetche/repo-isw-25-grupo10
 repo-isw-25-grupo10/
 │── README.md
 │── planificacion/
-│ ├── programa.pdf
+│ ├── plan-de-configuración.md
 │ └── cronograma.xlsx
 │
-│── teoria/
-│ ├── notas-de-clases/
-│ ├── presentaciones/
-│ └── bibliografia/
+│── notas-de-clases/
 │
 │── practicos/
     ├── guia-tp.pdf

@@ -1,0 +1,84 @@
+# Plan de gestión de configuración
+
+### Ingeniería y calidad de software - Grupo 10
+
+**2025**
+
+**Enlace del repositorio:** https://github.com/candetche/repo-isw-25-grupo10
+
+## Estructura del repositorio
+
+```plaintext
+repo-isw-25-grupo10/
+│── README.md
+│── planificacion/
+│ ├── plan-de-configuración.md
+│ └── cronograma.xlsx
+│
+│── notas-de-clases/
+│
+│── practicos/
+    ├── guia-tp.pdf
+    └── tp<N>/
+```
+
+## Ítems de configuración
+
+- Documentación del plan de gestión de configuración
+- ReadMe.md
+- Versiones de software
+- Notas de clases
+- Archivos de código
+  > NOTA!! - _completar_
+
+## Reglas de Nombrado
+
+**Archivos y carpetas:**
+Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
+
+| Item de configuración | Regla de nombrado        |
+| --------------------- | ------------------------ |
+| Notas de clase        | `fecha-u<N>.<extensión>` |
+| Guía TP               | `guia-tp.<extensión> `   |
+| _comletar_            | _completar_              |
+
+**Convención de nombrado de commits:**
+Los mensajes de commit deben seguir el siguiente formato:
+`<prefijo>-<N>` - descripción breve
+
+| Prefijo    | Descripción                                  | Ejemplo                                                   |
+| ---------- | -------------------------------------------- | --------------------------------------------------------- |
+| `bug-<N>`  | Corrección de un bug (código).               | bug-12 - se corrige comportamiento en validación de login |
+| `imp-<N>`  | Mejoras o refactor de código (improvements). | imp-07 - optimización de consulta en base de datos        |
+| `feat-<N>` | Nueva funcionalidad (feature).               | feat-10 - se agrega exportar reporte a PDF                |
+| `doc-<N>`  | Cambios en documentación.                    | doc-01 - actualización readme.md                          |
+| `misc-<N>` | Otros cambios menores (misceláneo).          | misc-02 - se agregó un .gitkeep                           |
+
+## Branching
+
+> NOTA!!! _completar_
+
+## Herramientas a utilizar para SCM
+
+- Github: Accesibilidad, más utilizado para proyectos open source (dijo profe), permite manejo de versionado, diferentes ramas y resolución de conflictos.
+- Git: herramienta de línea de comandos para commits, ramas y merges.
+
+## Control de cambios
+
+> NOTA!!!!!
+> **_mepa que con lo que hay en branching alcanza, borraria esta sección_**
+
+## Criterio para linea base
+
+Cada línea base será definida luego de la entrega de un trabajo práctico grupal. Consideramos que con la entrega el estado del proyecto ha sido revisado y validado por todos los integrantes del grupo.
+
+Implementación: Uso de tags. git tag -a LB1 -m `LB<N>: <descripción>`
+
+## Glosario
+
+- `<N>`: número de ítem (1, 2, …)
+- `<tp>`: trabajo práctico
+- `<tpi>`: trabajo práctico de investigación
+- `<extension>`: extensión del archivo (.pdf, .jpg, .py, …)
+- `<mm-dd>`: fecha en el formato mm-dd en el que fue tomado el elemento
+- `LB`: línea base
