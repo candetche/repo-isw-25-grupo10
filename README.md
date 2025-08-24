@@ -17,8 +17,8 @@ repo-isw-25-grupo10/
 │ └── bibliografia/
 │
 │── practicos/
-├── guia-tp.pdf
-└── tp<N>/
+    ├── guia-tp.pdf
+    └── tp<N>/
 ```
 
 ## Objetivo del repositorio
