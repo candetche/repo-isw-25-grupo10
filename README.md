@@ -2,6 +2,19 @@
 
 Link del repositorio: https://github.com/candetche/repo-isw-25-grupo10
 
+## Integrantes del grupo
+
+- Manuel Pereira Duarte - 98099
+- Candela Etchechoury - 407630
+- Maximiliano Vicentini - 90426
+- Lourdes Belén Pugliese - 95196
+- Valentina Abril Heiland - 94696
+- Bautista Roffe Apra - 95484
+- Agustín Alberto Mendez Morales - 94822
+- Jerónimo Osuna - 90015
+- Santino Yorio - 97326
+- Luka Latorre - 96121
+  
 ## Esturctura del repositorio
 
 ```plaintext
