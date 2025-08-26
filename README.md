@@ -15,7 +15,7 @@ Link del repositorio: https://github.com/candetche/repo-isw-25-grupo10
 - Santino Yorio - 97326
 - Luka Latorre - 96121
   
-## Esturctura del repositorio
+## Estructura del repositorio
 
 ```plaintext
 repo-isw-25-grupo10/
