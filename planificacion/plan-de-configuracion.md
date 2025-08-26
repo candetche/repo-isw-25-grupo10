@@ -27,9 +27,11 @@ repo-isw-25-grupo10/
 - Documentación del plan de gestión de configuración
 - ReadMe.md
 - Versiones de software
+- Código fuente
 - Notas de clases
 - Archivos de código
-  > NOTA!! - _completar_
+- Guias de TP
+- Manual de instalación
 
 ## Reglas de Nombrado
 
@@ -39,8 +41,10 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 | Item de configuración | Regla de nombrado        |
 | --------------------- | ------------------------ |
 | Notas de clase        | `fecha-u<N>.<extensión>` |
-| Guía TP               | `guia-tp.<extensión> `   |
-| _comletar_            | _completar_              |
+| Guía TP               | `guia-tp<N>.<extensión> `|
+| Codigo fuente         | `nombre.<extensión>      |
+| Manual de instalación | `manual-TP<N>.md`        |
+
 
 **Convención de nombrado de commits:**
 Los mensajes de commit deben seguir el siguiente formato:
@@ -56,17 +60,14 @@ Los mensajes de commit deben seguir el siguiente formato:
 
 ## Branching
 
-> NOTA!!! _completar_
+main: Rama principal estable.
+dev/tp<N>: Una rama por trabajo práctico, donde se tengan los cambios aprobados por todos los integrantes. Luego esta rama será integrada a main y a la LB una vez aprobada. 
+<tipo>/nombre-descriptivo-de-lo-que-vamos-a-hacer: ramas específicas según los cambios a realizar. Luego esta rama será integrada a su respectiva rama dev/tp<N> una vez aprobada.
 
 ## Herramientas a utilizar para SCM
 
 - Github: Accesibilidad, más utilizado para proyectos open source (dijo profe), permite manejo de versionado, diferentes ramas y resolución de conflictos.
 - Git: herramienta de línea de comandos para commits, ramas y merges.
-
-## Control de cambios
-
-> NOTA!!!!!
-> **_mepa que con lo que hay en branching alcanza, borraria esta sección_**
 
 ## Criterio para linea base
 
