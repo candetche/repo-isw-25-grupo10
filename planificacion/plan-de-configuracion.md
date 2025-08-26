@@ -29,7 +29,6 @@ repo-isw-25-grupo10/
 - Versiones de software
 - Código fuente
 - Notas de clases
-- Archivos de código
 - Guias de TP
 - Manual de instalación
 
