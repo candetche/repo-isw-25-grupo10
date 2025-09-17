@@ -47,16 +47,16 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 
 **Convención de nombrado de commits:**
 Los mensajes de commit deben seguir el siguiente formato:
-`<prefijo>-<N>` - descripción breve
+`<prefijo>` - descripción breve
 
 | Prefijo     | Descripción                                     | Ejemplo                                                   |
 | ----------  | --------------------------------------------    | --------------------------------------------------------- |
-| `bug-`   | Corrección de un bug (código).                  | bug-12 - se corrige comportamiento en validación de login |
-| `imp-`   | Mejoras o refactor de código (improvements).    | imp-07 - optimización de consulta en base de datos        |
-| `feat-`  | Nueva funcionalidad (feature).                  | feat-10 - se agrega exportar reporte a PDF                |
-| `doc-`   | Cambios en documentación.                       | doc-01 - actualización readme.md                          |
-| `misc-`  | Otros cambios menores (misceláneo).             | misc-02 - se agregó un .gitkeep                           |
-| `Rename <nombre-anterior> to <nombre-nuevo>`| Cambiar nombre a item de configuracion | Rename-01 Metodo-lean-startup to metodo-lean-startup|
+| `bug-`   | Corrección de un bug (código).                  | bug-se corrige comportamiento en validación de login |
+| `imp-`   | Mejoras o refactor de código (improvements).    | imp-optimización de consulta en base de datos        |
+| `feat-`  | Nueva funcionalidad (feature).                  | feat-se agrega exportar reporte a PDF                |
+| `doc-`   | Cambios en documentación.                       | doc-actualización readme.md                          |
+| `misc-`  | Otros cambios menores (misceláneo).             | misc-se agregó un .gitkeep                           |
+| `Rename <nombre-anterior> to <nombre-nuevo>`| Cambiar nombre a item de configuracion | Rename-Metodo-lean-startup to metodo-lean-startup|
 
 
 ## Branching
