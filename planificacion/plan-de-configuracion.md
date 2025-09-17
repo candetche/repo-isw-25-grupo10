@@ -49,13 +49,15 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 Los mensajes de commit deben seguir el siguiente formato:
 `<prefijo>-<N>` - descripción breve
 
-| Prefijo    | Descripción                                  | Ejemplo                                                   |
-| ---------- | -------------------------------------------- | --------------------------------------------------------- |
-| `bug-<N>`  | Corrección de un bug (código).               | bug-12 - se corrige comportamiento en validación de login |
-| `imp-<N>`  | Mejoras o refactor de código (improvements). | imp-07 - optimización de consulta en base de datos        |
-| `feat-<N>` | Nueva funcionalidad (feature).               | feat-10 - se agrega exportar reporte a PDF                |
-| `doc-<N>`  | Cambios en documentación.                    | doc-01 - actualización readme.md                          |
-| `misc-<N>` | Otros cambios menores (misceláneo).          | misc-02 - se agregó un .gitkeep                           |
+| Prefijo     | Descripción                                     | Ejemplo                                                   |
+| ----------  | --------------------------------------------    | --------------------------------------------------------- |
+| `bug-<N>`   | Corrección de un bug (código).                  | bug-12 - se corrige comportamiento en validación de login |
+| `imp-<N>`   | Mejoras o refactor de código (improvements).    | imp-07 - optimización de consulta en base de datos        |
+| `feat-<N>`  | Nueva funcionalidad (feature).                  | feat-10 - se agrega exportar reporte a PDF                |
+| `doc-<N>`   | Cambios en documentación.                       | doc-01 - actualización readme.md                          |
+| `misc-<N>`  | Otros cambios menores (misceláneo).             | misc-02 - se agregó un .gitkeep                           |
+| `Rename <nombre-anterior> to <nombre-nuevo>`| Cambiar nombre a item de configuracion | Rename-01 Metodo-lean-startup to metodo-lean-startup|
+
 
 ## Branching
 
