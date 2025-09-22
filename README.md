@@ -23,9 +23,9 @@ repo-isw-25-grupo10
 |    │── bibliografia
 |    └── presentaciones-clases
 │── README.md
-│── planificacion
-│
 │── notas-de-clases
+│
+│── planificacion
 │
 │── practicos
 |    └── tp<N>
