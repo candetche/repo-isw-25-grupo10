@@ -22,6 +22,10 @@ repo-isw-25-grupo10
     └── tp<N>
         │── Consigna
         └── Entrega
+└── trabajos-investigacion-grupal
+    └── tp<N>
+        │── Consigna
+        └── Presentacion
 ```
 
 ## Ítems de configuración
@@ -33,6 +37,7 @@ repo-isw-25-grupo10
 - Notas de clases
 - Consignas de trabajos practicos
 - Entregas de trabajos practicos
+- Presentacions de trabajos practicos
 - Manual de instalación
 - Bibliografia
 - Presentaciones de clases
@@ -42,13 +47,14 @@ repo-isw-25-grupo10
 **Archivos y carpetas:**
 Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 
-| Item de configuración | Regla de nombrado            |
-| --------------------- | ------------------------     |
-| Notas de clase        | `fecha-u<N>.<extensión>`     |
-| Consigna TP           | `consigna-tp<N>.<extensión> `|
-| Entrega TP            | `entrega-tp<N>.<extensión> ` |
-| Codigo fuente         | `nombre.<extensión>          |
-| Manual de instalación | `manual-TP<N>.md`            |
+| Item de configuración | Regla de nombrado                 |
+| --------------------- | ------------------------          |
+| Notas de clase        | `fecha-u<N>.<extensión>`          |
+| Consigna TP           | `consigna-tp<N>.<extensión> `     |
+| Entrega TP            | `entrega-tp<N>.<extensión> `      |
+| Presentacion TP       | `presentacion-tp<N>.<extensión> ` |
+| Codigo fuente         | `nombre.<extensión>               |
+| Manual de instalación | `manual-TP<N>.md`                 |
 
 
 **Convención de nombrado de commits:**
