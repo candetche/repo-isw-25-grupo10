@@ -18,17 +18,23 @@ Link del repositorio: https://github.com/candetche/repo-isw-25-grupo10
 ## Estructura del repositorio
 
 ```plaintext
-repo-isw-25-grupo10/
+repo-isw-25-grupo10
+│── material-de-clases
+|    │── bibliografia
+|    └── presentaciones-clases
 │── README.md
-│── planificacion/
-│ ├── plan-de-configuración.md
-│ └── cronograma.xlsx
+│── planificacion
 │
-│── notas-de-clases/
+│── notas-de-clases
 │
-│── practicos/
-    ├── guia-tp.pdf
-    └── tp<N>/
+│── practicos
+|    └── tp<N>
+|        │── Consigna
+|        └── Entrega
+└── trabajos-investigacion-grupal
+    └── tp<N>
+        │── Consigna
+        └── Presentacion
 ```
 
 ## Objetivo del repositorio
