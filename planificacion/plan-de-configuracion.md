@@ -10,7 +10,7 @@
 
 ```plaintext
 repo-isw-25-grupo10
-│── MaterialDeClases
+│── material-de-clases
 |    │── bibliografia
 |    └── presentaciones-clases
 │── README.md
@@ -18,10 +18,10 @@ repo-isw-25-grupo10
 │
 │── notas-de-clases
 │
-└── practicos
-    └── tp<N>
-        │── Consigna
-        └── Entrega
+│── practicos
+|    └── tp<N>
+|        │── Consigna
+|        └── Entrega
 └── trabajos-investigacion-grupal
     └── tp<N>
         │── Consigna
