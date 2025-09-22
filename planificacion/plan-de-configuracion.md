@@ -9,17 +9,19 @@
 ## Estructura del repositorio
 
 ```plaintext
-repo-isw-25-grupo10/
+repo-isw-25-grupo10
+│── MaterialDeClases
+|    │── bibliografia
+|    └── presentaciones-clases
 │── README.md
-│── planificacion/
-│ ├── plan-de-configuración.md
-│ └── cronograma.xlsx
+│── planificacion
 │
-│── notas-de-clases/
+│── notas-de-clases
 │
-│── practicos/
-    ├── guia-tp.pdf
-    └── tp<N>/
+└── practicos
+    └── tp<N>
+        │── Consigna
+        └── Entrega
 ```
 
 ## Ítems de configuración
@@ -29,20 +31,24 @@ repo-isw-25-grupo10/
 - Versiones de software
 - Código fuente
 - Notas de clases
-- Guias de TP
+- Consignas de trabajos practicos
+- Entregas de trabajos practicos
 - Manual de instalación
+- Bibliografia
+- Presentaciones de clases
 
 ## Reglas de Nombrado
 
 **Archivos y carpetas:**
 Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 
-| Item de configuración | Regla de nombrado        |
-| --------------------- | ------------------------ |
-| Notas de clase        | `fecha-u<N>.<extensión>` |
-| Guía TP               | `guia-tp<N>.<extensión> `|
-| Codigo fuente         | `nombre.<extensión>      |
-| Manual de instalación | `manual-TP<N>.md`        |
+| Item de configuración | Regla de nombrado            |
+| --------------------- | ------------------------     |
+| Notas de clase        | `fecha-u<N>.<extensión>`     |
+| Consigna TP           | `consigna-tp<N>.<extensión> `|
+| Entrega TP            | `entrega-tp<N>.<extensión> ` |
+| Codigo fuente         | `nombre.<extensión>          |
+| Manual de instalación | `manual-TP<N>.md`            |
 
 
 **Convención de nombrado de commits:**
