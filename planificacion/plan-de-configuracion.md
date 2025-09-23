@@ -13,6 +13,7 @@ repo-isw-25-grupo10
 │── material-de-clases
 |    │── bibliografia
 |    └── presentaciones-clases
+|    └── templates-para-practicos-y-parciales
 │── README.md
 │── planificacion
 │
