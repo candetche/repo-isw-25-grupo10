@@ -42,6 +42,7 @@ repo-isw-25-grupo10
 - Manual de instalación
 - Bibliografia
 - Presentaciones de clases
+- Templates para practicos y parciales
 
 ## Reglas de Nombrado
 
@@ -54,7 +55,7 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 | Consigna TP           | `consigna-tp<N>.<extensión> `     |
 | Entrega TP            | `entrega-tp<N>.<extensión> `      |
 | Presentacion TP       | `presentacion-tp<N>.<extensión> ` |
-| Codigo fuente         | `nombre.<extensión>               |
+| Codigo fuente         | `nombre.<extensión>`               |
 | Manual de instalación | `manual-TP<N>.md`                 |
 
 
