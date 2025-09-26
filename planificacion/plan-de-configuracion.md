@@ -56,7 +56,7 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 | Entrega TP            | `entrega-tp<N>.<extensión> `      |
 | Presentacion TP       | `presentacion-tp<N>.<extensión> ` |
 | Codigo fuente         | `nombre.<extensión>`               |
-| Manual de instalación | `manual-TP<N>.md`                 |
+| Manual de instalación | `manual-tp<N>.md`                 |
 
 
 **Convención de nombrado de commits:**
