@@ -51,8 +51,8 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 
 | Item de configuración | Regla de nombrado                 |
 | --------------------- | ------------------------          |
-| Notas de clase        | `fecha-u<N>.<extensión>`          |
-| Consigna TP           | `consigna-tp<N>.<extensión> `     |
+| Notas de clase        | `fecha-<temas-de-la-clase>.<pdf>`          |
+| Consignas TP           | `consigna-tp<N>.<pdf> `     |
 | Entrega TP            | `entrega-tp<N>.<extensión> `      |
 | Presentacion TP       | `presentacion-tp<N>.<extensión> ` |
 | Codigo fuente         | `nombre.<extensión>`               |
