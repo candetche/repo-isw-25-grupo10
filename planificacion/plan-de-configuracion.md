@@ -21,12 +21,12 @@ repo-isw-25-grupo10
 │
 │── practicos
 |    └── tp<N>
-|        │── Consigna
-|        └── Entrega
+|        │── consigna
+|        └── entrega
 └── trabajos-investigacion-grupal
     └── tp<N>
-        │── Consigna
-        └── Presentacion
+        │── consigna
+        └── presentacion
 ```
 
 ## Ítems de configuración
