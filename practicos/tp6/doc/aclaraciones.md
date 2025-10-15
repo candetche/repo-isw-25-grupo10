@@ -1,7 +1,7 @@
 # 🌿 Especificaciones de Inscripción a Actividades del Parque Natural
 
 Este documento detalla los requisitos, condiciones y lineamientos para la inscripción a las actividades recreativas del **Parque Natural**.  
-Incluye la gestión de cupos, horarios, requisitos de edad, y los términos y condiciones aplicables.
+Incluye la gestión de cupos, horarios, requisitos de edad, términos y condiciones aplicables, y detalles sobre la interfaz y diseño.
 
 ---
 
@@ -23,6 +23,7 @@ Incluye la gestión de cupos, horarios, requisitos de edad, y los términos y co
 | 🕘 **Horario general** | 9:00 a 18:00 |
 | ⏱️ **Duración por turno** | 30 minutos |
 | 🔁 **Turnos por hora** | 2 |
+| 📅 **Días de apertura** | Todos los días **menos los lunes** y días festivos (25 de diciembre y 1° de enero) |
 
 ---
 
@@ -58,7 +59,8 @@ El/la participante **asume voluntariamente dichos riesgos** y se compromete a se
 
 - No se permitirá la participación bajo efectos de alcohol, medicamentos o sustancias que alteren el estado físico o mental.  
 - Los menores de edad deben contar con autorización y supervisión de un adulto responsable.  
-- El parque podrá suspender o reprogramar actividades por razones climáticas o de seguridad.
+- El parque podrá suspender o reprogramar actividades por razones climáticas o de seguridad.  
+- **Inscripción anticipada:** Una persona se puede inscribir a una actividad con hasta **2 días de anticipación**.
 
 ---
 
@@ -112,6 +114,14 @@ Al confirmar la inscripción, el/la participante declara haber **leído y acepta
 Al finalizar la inscripción:
 - Se debe **enviar una confirmación por correo electrónico** al participante.  
 - Se debe **mostrar un mensaje emergente (popup/modal)** de confirmación en pantalla.  
+
+---
+
+## 9️⃣ Interfaz y diseño
+
+- **Logo del parque:** Debe ser diseñado por el equipo y enviado para validación.  
+- **Paleta de colores:** [Coolors Paleta Oficial](https://coolors.co/134611-3e8914-3da35d-96e072-e8fccf)  
+- **Fuente:** Montserrat  
 
 ---
 
