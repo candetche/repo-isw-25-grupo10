@@ -27,7 +27,46 @@
 - A continuación se presenta un **modelo de términos y condiciones** para validación:
 
 ---
-## AGREGAR TERMINOS Y CONDICIONES ESPECIFICOS DE CADA ACTIVIDAD
+# Términos y Condiciones de Participación
+
+Al inscribirse en cualquiera de las actividades ofrecidas por el **Parque Natural**, el/la participante declara haber leído, comprendido y aceptado los presentes términos y condiciones.
+
+---
+
+## 🏞️ Aceptación de riesgo
+Las actividades se desarrollan en entornos naturales y pueden implicar cierto nivel de riesgo físico.  
+El/la participante **asume voluntariamente dichos riesgos** y se compromete a seguir todas las indicaciones del personal del parque.
+
+---
+
+## 🎟️ Condiciones de participación
+
+- No se permitirá la participación bajo efectos de alcohol, medicamentos o sustancias que alteren el estado físico o mental.  
+- Los menores de edad deben contar con autorización y supervisión de un adulto responsable.  
+- El parque podrá suspender o reprogramar actividades por razones climáticas o de seguridad.
+
+---
+
+## 🦺 Seguridad y equipamiento
+El uso del **equipamiento de seguridad provisto por el parque** es obligatorio en todas las actividades que así lo requieran.  
+El/la participante se compromete a **utilizarlo correctamente y devolverlo en las condiciones recibidas**.
+
+---
+
+## ⚖️ Responsabilidad
+El parque **no se hace responsable** por pérdidas o daños de objetos personales ni por lesiones derivadas del incumplimiento de las normas de seguridad.  
+La participación implica la **aceptación plena de estas condiciones** y la **renuncia a cualquier reclamo por daños** derivados de la práctica de las actividades.
+
+---
+
+## 🔒 Protección de datos personales
+Los datos brindados serán utilizados únicamente para la **gestión de la inscripción** y comunicaciones relacionadas con las actividades, conforme a la legislación vigente.
+
+---
+
+## ✅ Confirmación
+Al confirmar la inscripción, el/la participante declara haber **leído y aceptado estos términos y condiciones en su totalidad**.
+
 
 
 ---
