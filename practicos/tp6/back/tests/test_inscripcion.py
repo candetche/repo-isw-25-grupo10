@@ -79,15 +79,7 @@ def setup_inscripcion(setup_actividades):
 
 
 
-def test_6_inscripcion_sin_talle_requerido_debe_fallar(setup_inscripcion):
-    """Test 6: Probar inscribirse a una actividad sin ingresar el talle de la vestimenta requerido (falla)."""
-    s = setup_inscripcion
 
-    # Tirolesa requiere talle, Ema (visitante_ema_sin_talle) no lo provee.
-    with pytest.raises(ErrorFaltaTalle):
-        s['servicio'].inscribir(
-            turno=s['turno_tirolesa_con_cupo'],
-            participantes=[s['visitante_ema_sin_talle']],  # Talle es None, pero la actividad lo requiere
 def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
     """Test 4: Probar inscribirse a un horario en el cual el parque está cerrado (falla)."""
     s = setup_inscripcion
@@ -97,5 +89,32 @@ def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
         s['servicio'].inscribir(
             turno=s['t_invalido_cerrado'],  # Hora 18:30
             participantes=[s['v_beto_valido']],
+            acepta_terminos=True
+        )
+def test_6_inscripcion_sin_talle_requerido_debe_fallar(setup_inscripcion):
+    """Test 6: Probar inscribirse a una actividad sin ingresar el talle de la vestimenta requerido (falla)."""
+    s = setup_inscripcion
+
+    # Tirolesa requiere talle, Ema (v_ema_sin_talle) no lo provee.
+    with pytest.raises(ErrorFaltaTalle):
+        s['servicio'].inscribir(
+            turno=s['t_tirolesa_con_cupo'],
+            participantes=[s['v_ema_sin_talle']],  # Talle es None, pero la actividad lo requiere
+            acepta_terminos=True
+        )
+
+# Caso 7 (Alta): Intentar inscribirse con edad inválida en Palestra (mínimo 12)
+def test_7_inscripcion_edad_invalida_debe_fallar(setup_inscripcion):
+    """Test 7: Probar inscribirse a una actividad seleccionando una edad inválida (falla)."""
+    s = setup_inscripcion
+
+    # Palestra tiene edad mínima 12. Fede tiene 11 (v_fede_edad_11).
+    turno_palestra_con_cupo = Turno(id=201, actividad_nombre="Palestra", fecha=date.today(), hora=time(16, 0),
+                                    cupo_ocupado=0)
+
+    with pytest.raises(ErrorRestriccionEdad):
+        s['servicio'].inscribir(
+            turno=turno_palestra_con_cupo,
+            participantes=[s['v_fede_edad_11']],  # 11 años < 12 años
             acepta_terminos=True
         )
