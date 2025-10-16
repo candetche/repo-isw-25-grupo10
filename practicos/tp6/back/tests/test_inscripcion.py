@@ -88,5 +88,14 @@ def test_6_inscripcion_sin_talle_requerido_debe_fallar(setup_inscripcion):
         s['servicio'].inscribir(
             turno=s['turno_tirolesa_con_cupo'],
             participantes=[s['visitante_ema_sin_talle']],  # Talle es None, pero la actividad lo requiere
+def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
+    """Test 4: Probar inscribirse a un horario en el cual el parque está cerrado (falla)."""
+    s = setup_inscripcion
+
+    # Turno 18:30 está fuera del rango 9:00-18:00
+    with pytest.raises(ErrorParqueCerrado):
+        s['servicio'].inscribir(
+            turno=s['t_invalido_cerrado'],  # Hora 18:30
+            participantes=[s['v_beto_valido']],
             acepta_terminos=True
         )
