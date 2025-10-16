@@ -77,6 +77,17 @@ def setup_inscripcion(setup_actividades):
         "visitante_julio_nuevo": visitante_julio_nuevo,
     }
 
+
+
+def test_6_inscripcion_sin_talle_requerido_debe_fallar(setup_inscripcion):
+    """Test 6: Probar inscribirse a una actividad sin ingresar el talle de la vestimenta requerido (falla)."""
+    s = setup_inscripcion
+
+    # Tirolesa requiere talle, Ema (visitante_ema_sin_talle) no lo provee.
+    with pytest.raises(ErrorFaltaTalle):
+        s['servicio'].inscribir(
+            turno=s['turno_tirolesa_con_cupo'],
+            participantes=[s['visitante_ema_sin_talle']],  # Talle es None, pero la actividad lo requiere
 def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
     """Test 4: Probar inscribirse a un horario en el cual el parque está cerrado (falla)."""
     s = setup_inscripcion
