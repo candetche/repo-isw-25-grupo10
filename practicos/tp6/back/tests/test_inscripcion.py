@@ -1,11 +1,11 @@
 import pytest
 from datetime import date, time
-from ..src.servicio_inscripcion import ServicioInscripcion
-from ..src.repositorio import RepositorioEnMemoria
-from ..src.modelos.visitante import Visitante
-from ..src.modelos.turno import Turno
-from ..src.modelos.inscripcion import Inscripcion
-from ..src.excepciones import (
+from back.src.servicio_inscripcion import ServicioInscripcion
+from back.src.repositorio import RepositorioEnMemoria
+from back.src.modelos.visitante import Visitante
+from back.src.modelos.turno import Turno
+from back.src.modelos.inscripcion import Inscripcion
+from back.src.excepciones import (
     ErrorSinCupo,
     ErrorTerminosNoAceptados,
     ErrorHorarioInvalido,
