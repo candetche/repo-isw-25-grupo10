@@ -1,11 +1,11 @@
 import pytest
 from datetime import date, time
-from ..src.servicio_inscripcion import ServicioInscripcion
-from ..src.repositorio import RepositorioEnMemoria
-from ..src.modelos.visitante import Visitante
-from ..src.modelos.turno import Turno
-from ..src.modelos.inscripcion import Inscripcion
-from ..src.excepciones import (
+from back.src.servicio_inscripcion import ServicioInscripcion
+from back.src.repositorio import RepositorioEnMemoria
+from back.src.modelos.visitante import Visitante
+from back.src.modelos.turno import Turno
+from back.src.modelos.inscripcion import Inscripcion
+from back.src.excepciones import (
     ErrorSinCupo,
     ErrorTerminosNoAceptados,
     ErrorHorarioInvalido,
@@ -76,3 +76,19 @@ def setup_inscripcion(setup_actividades):
         "visitante_bebe": visitante_bebe,
         "visitante_julio_nuevo": visitante_julio_nuevo,
     }
+
+# TEST 1
+def test_inscripcion_singular_valida_pasa(setup_inscripcion):
+    """Test 1: Probar inscribirse a una actividad del listado que poseen cupos disponibles, seleccionando un horario,
+    ingresando los datos del visitante ( nombre, DNI, edad, talla de la vestimenta si la actividad lo requiere) y
+    aceptando los términos y condiciones (pasa)."""
+    s = setup_inscripcion
+
+    inscripcion = s['servicio'].inscribir(
+        turno=s['turno_tirolesa_con_cupo'],
+        participantes=[s['visitante_beto_valido']],
+        acepta_terminos=True
+    )
+
+    assert inscripcion is not None
+    assert isinstance(inscripcion, Inscripcion)
