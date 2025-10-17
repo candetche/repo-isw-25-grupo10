@@ -77,6 +77,21 @@ def setup_inscripcion(setup_actividades):
         "visitante_julio_nuevo": visitante_julio_nuevo,
     }
 
+# TEST 1
+def test_inscripcion_singular_valida_pasa(setup_inscripcion):
+    """Test 1: Probar inscribirse a una actividad del listado que poseen cupos disponibles, seleccionando un horario,
+    ingresando los datos del visitante ( nombre, DNI, edad, talla de la vestimenta si la actividad lo requiere) y
+    aceptando los términos y condiciones (pasa)."""
+    s = setup_inscripcion
+
+    inscripcion = s['servicio'].inscribir(
+        turno=s['turno_tirolesa_con_cupo'],
+        participantes=[s['visitante_beto_valido']],
+        acepta_terminos=True
+    )
+
+    assert inscripcion is not None
+    assert isinstance(inscripcion, Inscripcion)
 
 
 
