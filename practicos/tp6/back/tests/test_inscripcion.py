@@ -93,7 +93,18 @@ def test_inscripcion_singular_valida_pasa(setup_inscripcion):
     assert inscripcion is not None
     assert isinstance(inscripcion, Inscripcion)
 
+# TEST 2
+def test_2_inscripcion_sin_cupo_debe_fallar(setup_inscripcion):
+    """Test 2: Probar inscribirse a una actividad que no tiene cupo (falla)."""
+    s = setup_inscripcion
 
+    # Palestra está llena (cupo_ocupado=12) y capacidad es 12.
+    with pytest.raises(ErrorSinCupo):
+        s['servicio'].inscribir(
+            turno=s['t_palestra_sin_cupo'],
+            participantes=[s['v_beto_valido']],  # Solo 1 persona
+            acepta_terminos=True
+        )
 
 def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
     """Test 4: Probar inscribirse a un horario en el cual el parque está cerrado (falla)."""
