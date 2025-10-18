@@ -144,3 +144,17 @@ def test_7_inscripcion_edad_invalida_debe_fallar(setup_inscripcion):
             participantes=[s['v_fede_edad_11']],  # 11 años < 12 años
             acepta_terminos=True
         )
+
+def test_10_inscripcion_multiple_sin_cupo_debe_fallar(setup_inscripcion):
+    """Test 10: Probar inscribir más de un visitante a una actividad que no tiene cupo para todos ellos (falla)."""
+    s = setup_inscripcion
+
+    # Jardinería (12 capacidad - 10 ocupados = 2 disponibles). Intentamos inscribir 3.
+    participantes_insuficientes = [s['v_beto_valido'], s['v_ana_reserva'], s['v_ceci_edad_8']]  # Total: 3 personas
+
+    with pytest.raises(ErrorSinCupo):
+        s['servicio'].inscribir(
+            turno=s['t_jardineria_poco_cupo'],  # Solo 2 cupos disponibles
+            participantes=participantes_insuficientes,  # Intentamos inscribir 3
+            acepta_terminos=True
+        )
