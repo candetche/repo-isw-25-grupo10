@@ -174,6 +174,18 @@ def test_7_inscripcion_edad_invalida_debe_fallar(setup_inscripcion):
         )
 
 #TEST 8
+def test_8_inscripcion_concurrencia_debe_fallar(setup_inscripcion):
+    """Test 8: Probar inscribirse en un horario en el cuál el visitante ya tenga otra actividad (falla)."""
+    s = setup_inscripcion
+
+    # Ana (V001) ya tiene una reserva a las 14:00.
+    # Intentamos inscribir a Ana a Tirolesa, también a las 14:00.
+    with pytest.raises(ErrorChoqueHorario):
+        s['servicio'].inscribir(
+            turno=s['t_tirolesa_con_cupo'],  # Mismo horario que la reserva existente de Ana (14:00)
+            participantes=[s['v_ana_reserva']],  # Ana (DNI V001)
+            acepta_terminos=True
+        )
 
 #TEST 9
 
