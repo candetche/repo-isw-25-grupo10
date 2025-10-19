@@ -107,6 +107,15 @@ def test_2_inscripcion_sin_cupo_debe_fallar(setup_inscripcion):
         )
 
 #TEST 3
+def test_participante_sin_talle_inscribe_actividad_no_requiere_talle_pasa(servicio, configuracion_actividades):
+    turno = configuracion_actividades["_turnos"]["_t_Palestra_1200"]
+    luz = configuracion_actividades["_p_Luz_Palestra_sin_talle"]
+
+    with pytest.raises(ErrorFaltaTalle):
+        servicio.inscribir(
+            turno_id=turno["turno_id"],
+            participantes=[luz],
+            terminos_aceptados=True
 
 #TEST 4
 def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
