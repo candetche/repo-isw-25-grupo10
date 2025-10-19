@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap");
+/* Tipografia que pidio el profe por mail */
+
+/* tamaño del logo en la cabecera */
+.header .logo{ 
+  height: 1000px;        
+  width: auto;
+}
+
+@media (min-width: 1024px){
+  .header .logo{ height: 84px; }
+}
+
+
+:root{
+  --g-900:#134611;
+  --g-700:#3E8914;
+  --g-500:#3DA35D;
+  --g-300:#96E072;
+  --g-050:#E8FCCF;
+  --bg:#E8FCCF;
+  --txt:#1b1b1d;
+}
+
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{
+  margin:0; font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: var(--bg); color: var(--txt);
+}
+
+.container{max-width:960px; margin:0 auto; padding:24px}
+.card{
+  background:#3E8914; border:1px solid #3E8914; border-radius:16px; padding:20px;
+  box-shadow: 0 6px 24px rgba(19,70,17,0.06);
+}
+.header{
+  display:flex; align-items:center; gap:16px; margin-bottom:18px;
+}
+.header img{height:100px}
+.badge{
+  display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px;
+  background: var(--g-050); color: var(--g-900); font-weight:600; font-size:12px;
+  border:1px solid #d9f5b8;
+}
+
+.h1{font-size:24px; font-weight:800; color:var(--g-900); margin:0}
+.sub{color:#4b4f46; margin:4px 0 0 0}
+
+.row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.row-3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
+.field{display:flex; flex-direction:column; gap:6px; margin:6px 0}
+label{font-weight:600; font-size:14px}
+input, select, button, textarea{
+  font:inherit; padding:10px 12px; border-radius:10px; border:1px solid #dbe6cf; background:#fff;
+}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--g-300); border-color: var(--g-500)}
+.helper{font-size:12px; color:#E8FCCF}
+.err{font-size:12px; color:#b60202; margin-top:4px}
+.hr{height:1px; background:#ecf3e6; margin:16px 0}
+
+.btn{
+  padding:11px 14px; border-radius:12px; border:1px solid transparent; cursor:pointer;
+  background: #134611; color:#fff; font-weight:700;
+}
+.btn.secondary{background:#fff; color:var(--g-900); border-color:#dbe6cf}
+.btn:disabled{opacity:.6; cursor:not-allowed}
+.btnbar{display:flex; gap:10px; justify-content:flex-end; margin-top:12px}
+
+.stepper{display:flex; gap:8px; margin:8px 0 18px}
+.step{
+  padding:8px 12px; border-radius:999px; border:1px solid #e7efd9; background:#fff; color:#3a4a37; font-weight:700; font-size:12px;
+}
+.step.active{background:var(--g-300); border-color:var(--g-500); color:#0c2c08}
+
+.table{width:100%; border-collapse:collapse}
+.table th,.table td{padding:10px; border-bottom:1px solid #eef3ea; text-align:left}
+.table th{background:#3E8914; font-size:13px}
+.table input,.table select{width:100%}
+
+.modal-backdrop{
+  position:fixed;
+  inset:0; 
+  background:rgba(0,0,0,.28); 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  padding:20px;
+  z-index: 1000;
+}
+.modal{
+  width:min(720px, 92vw); background:#fff; border-radius:16px; border:1px solid #e7efd9;
+  box-shadow: 0 10px 40px rgba(19,70,17,.15); overflow:hidden;
+}
+.modal header, .modal footer{padding:14px 16px; background:#fafdf5}
+.modal footer{display:flex; justify-content:flex-end; gap:10px}
+.modal main{padding:16px; max-height:60vh; overflow:auto}
+.success{
+  background: linear-gradient( to right, var(--g-300), var(--g-050)); border:1px solid var(--g-300);
+  padding:14px 16px; border-radius:12px; color:#133b0f; font-weight:700;
+}
+
