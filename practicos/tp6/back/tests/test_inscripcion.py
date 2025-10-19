@@ -106,6 +106,9 @@ def test_2_inscripcion_sin_cupo_debe_fallar(setup_inscripcion):
             acepta_terminos=True
         )
 
+#TEST 3
+
+#TEST 4
 def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
     """Test 4: Probar inscribirse a un horario en el cual el parque está cerrado (falla)."""
     s = setup_inscripcion
@@ -117,6 +120,21 @@ def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
             participantes=[s['v_beto_valido']],
             acepta_terminos=True
         )
+
+
+#TEST 5
+def test_5_inscripcion_sin_aceptar_terminos_debe_fallar(setup_inscripcion):
+    """Test 5: Probar inscribirse a una actividad sin aceptar los términos y condiciones (falla)."""
+    s = setup_inscripcion
+
+    with pytest.raises(ErrorTerminosNoAceptados):
+        s['servicio'].inscribir(
+            turno=s['t_tirolesa_con_cupo'],
+            participantes=[s['v_beto_valido']],
+            acepta_terminos=False  # Clave del fallo
+        )
+
+#TEST 6
 def test_6_inscripcion_sin_talle_requerido_debe_fallar(setup_inscripcion):
     """Test 6: Probar inscribirse a una actividad sin ingresar el talle de la vestimenta requerido (falla)."""
     s = setup_inscripcion
@@ -129,6 +147,7 @@ def test_6_inscripcion_sin_talle_requerido_debe_fallar(setup_inscripcion):
             acepta_terminos=True
         )
 
+#TEST 7
 # Caso 7 (Alta): Intentar inscribirse con edad inválida en Palestra (mínimo 12)
 def test_7_inscripcion_edad_invalida_debe_fallar(setup_inscripcion):
     """Test 7: Probar inscribirse a una actividad seleccionando una edad inválida (falla)."""
@@ -145,6 +164,11 @@ def test_7_inscripcion_edad_invalida_debe_fallar(setup_inscripcion):
             acepta_terminos=True
         )
 
+#TEST 8
+
+#TEST 9
+
+#TEST 10
 def test_10_inscripcion_multiple_sin_cupo_debe_fallar(setup_inscripcion):
     """Test 10: Probar inscribir más de un visitante a una actividad que no tiene cupo para todos ellos (falla)."""
     s = setup_inscripcion
