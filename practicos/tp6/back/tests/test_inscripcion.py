@@ -115,7 +115,7 @@ def test_participante_sin_talle_inscribe_actividad_no_requiere_talle_pasa(servic
         servicio.inscribir(
             turno_id=turno["turno_id"],
             participantes=[luz],
-            terminos_aceptados=True
+            terminos_aceptados=True)
 
 #TEST 4
 def test_4_inscripcion_horario_invalido_debe_fallar(setup_inscripcion):
