@@ -188,6 +188,26 @@ def test_8_inscripcion_concurrencia_debe_fallar(setup_inscripcion):
         )
 
 #TEST 9
+def test_9_inscripcion_multiple_valida_debe_pasar(setup_inscripcion):
+    """Test 9: Probar inscribir más de una persona con cupo y datos requeridos (pasa)."""
+    s = setup_inscripcion
+
+    # Tirolesa (10 capacidad - 3 ocupados = 7 disponibles). Inscribimos 3.
+    participantes_multiples = [
+        s['v_beto_valido'],  # Talle L, 28 años
+        s['v_ceci_edad_8'],  # Talle S, 8 años (mínimo ok para Tirolesa)
+        Participante(nombre="Julio", dni="V008", edad=30, talle="XL")  # Talle XL
+    ]
+
+    inscripcion = s['servicio'].inscribir(
+        turno=s['t_tirolesa_con_cupo'],
+        participantes=participantes_multiples,  # 3 personas
+        acepta_terminos=True
+    )
+
+    # RED: Este assert DEBE FALLAR inicialmente.
+    assert inscripcion is not None
+    assert len(inscripcion.participantes) == 3
 
 #TEST 10
 def test_10_inscripcion_multiple_sin_cupo_debe_fallar(setup_inscripcion):
