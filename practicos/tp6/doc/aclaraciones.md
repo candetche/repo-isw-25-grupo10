@@ -138,7 +138,11 @@ Al finalizar la inscripción:
 
 ## 🔟 Pruebas extra
 
-Este apartado se destina a la **documentación de pruebas adicionales** relacionadas con la inscripción a actividades del Parque Natural.
+Este apartado documenta **nuevos casos de prueba** que **no estaban contemplados originalmente en la User Story**.  
+A partir de una **conversación y ronda de consultas con el cliente**, se obtuvieron **aclaraciones adicionales** sobre las reglas de negocio y condiciones de inscripción, las cuales se encuentran detalladas en los apartados anteriores del presente documento.  
+
+Gracias a estas precisiones, fue posible definir las siguientes **pruebas complementarias** destinadas a validar la correcta aplicación de dichas reglas en el sistema.
+
 
 ### 🧾 Casos de prueba
 
