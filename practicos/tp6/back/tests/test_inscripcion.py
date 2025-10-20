@@ -1,5 +1,5 @@
 import pytest
-from datetime import date, time
+from datetime import date, time, timedelta
 from back.src.servicio_inscripcion import ServicioInscripcion
 from back.src.repositorio import RepositorioEnMemoria
 from back.src.modelos.visitante import Visitante
@@ -31,6 +31,9 @@ def setup_inscripcion(setup_actividades):
     """Define el estado inicial dinámico del sistema para todas las pruebas."""
 
     FECHA_HOY = date.today()
+    dias_hasta_lunes = (0 - FECHA_HOY.weekday() + 7) % 7
+    FECHA_LUNES_CERRADO = FECHA_HOY + timedelta(days=dias_hasta_lunes if dias_hasta_lunes != 0 else 7)  # Evita el lunes de hoy si es hoy
+    FECHA_3_DIAS_ANTICIPACION = FECHA_HOY + timedelta(days=3)
 
     # VISITANTES SETEADOS PARA TESTS
     visitante_ana_reserva = Visitante(nombre="Ana", dni=30123456, edad=30, talle="M")
@@ -44,16 +47,17 @@ def setup_inscripcion(setup_actividades):
     # TURNOS 
     turno_tirolesa_con_cupo = Turno(id=101, actividad_nombre="Tirolesa", fecha=FECHA_HOY, hora=time(14, 0), cupo_ocupado=3)
     turno_palestra_sin_cupo = Turno(id=202, actividad_nombre="Palestra", fecha=FECHA_HOY, hora=time(15, 0), cupo_ocupado=12)
-    turno_jardineria_poco_cupo = Turno(id=301, actividad_nombre="Jardinería", fecha=FECHA_HOY, hora=time(10, 0),
-                                   cupo_ocupado=10)
+    turno_jardineria_poco_cupo = Turno(id=301, actividad_nombre="Jardinería", fecha=FECHA_HOY, hora=time(10, 0),cupo_ocupado=10)
     turno_invalido_cerrado = Turno(id=999, actividad_nombre="Tirolesa", fecha=FECHA_HOY, hora=time(18, 30), cupo_ocupado=0)
-
+    turno_lunes_cerrado = Turno(id=110, actividad_nombre="Tirolesa", fecha=FECHA_LUNES_CERRADO, hora=time(14, 0),cupo_ocupado=0)
+    turno_25_dic = Turno(id=120, actividad_nombre="Tirolesa", fecha=date(FECHA_HOY.year, 12, 25), hora=time(14, 0),cupo_ocupado=0)
+    turno_1_ene = Turno(id=130, actividad_nombre="Tirolesa", fecha=date(FECHA_HOY.year + 1, 1, 1), hora=time(14, 0),cupo_ocupado=0)
+    turno_anticipacion_excesiva = Turno(id=140, actividad_nombre="Tirolesa", fecha=FECHA_3_DIAS_ANTICIPACION,hora=time(14, 0), cupo_ocupado=0)
     turnos_disponibles = [turno_tirolesa_con_cupo, turno_palestra_sin_cupo, turno_jardineria_poco_cupo]
 
     # INSCRIPCIONES EXISTENTES (Para Test 8)
     turno_ana_ya_existente = Turno(id=500, actividad_nombre="Jardinería", fecha=FECHA_HOY, hora=time(14, 0), cupo_ocupado=1)
-    inscripcion_ana = Inscripcion(turno=turno_ana_ya_existente, visitantes=[visitante_ana_reserva], total_personas=1,
-                                  acepta_terminos=True)
+    inscripcion_ana = Inscripcion(turno=turno_ana_ya_existente, visitantes=[visitante_ana_reserva], total_personas=1,acepta_terminos=True)
 
     repo = RepositorioEnMemoria(inscripciones=[inscripcion_ana])
 
@@ -67,6 +71,10 @@ def setup_inscripcion(setup_actividades):
         "turno_palestra_sin_cupo": turno_palestra_sin_cupo,
         "turno_jardineria_poco_cupo": turno_jardineria_poco_cupo,
         "turno_invalido_cerrado": turno_invalido_cerrado,
+        "turno_lunes_cerrado": turno_lunes_cerrado,
+        "turno_25_dic": turno_25_dic,
+        "turno_1_ene": turno_1_ene,
+        "turno_anticipacion_excesiva": turno_anticipacion_excesiva,
         # Visitantes
         "visitante_ana_reserva": visitante_ana_reserva,
         "visitante_beto_valido": visitante_beto_valido,
