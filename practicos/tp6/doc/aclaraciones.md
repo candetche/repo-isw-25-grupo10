@@ -136,4 +136,21 @@ Al finalizar la inscripción:
 
 ---
 
+## 🔟 Pruebas extra
+
+Este apartado se destina a la **documentación de pruebas adicionales** relacionadas con la inscripción a actividades del Parque Natural.
+
+### 🧾 Casos de prueba
+
+| Test Nº | Descripción | Resultado esperado |
+|----------|--------------|--------------------|
+| **7** | Probar inscribirse a una actividad seleccionando una **edad inválida** para la actividad seleccionada. | ❌ Falla |
+| **8** | Probar inscribirse en una actividad en un **horario en el cual el visitante ya tenga otra actividad registrada**. | ❌ Falla |
+| **9** | Probar inscribir **más de una persona** a una actividad con **cupos disponibles**, seleccionando un horario, ingresando los datos del visitante (nombre, DNI, edad, talla si aplica) y **aceptando los términos y condiciones**. | ✅ Pasa |
+| **10** | Probar inscribir **más de un visitante** a una actividad que **no tiene cupo suficiente** para todos ellos. | ❌ Falla |
+| **11** | Probar inscribirse a una actividad cuya fecha **caiga en un día en que el parque está cerrado**. | ❌ Falla |
+| **12** | Probar inscribirse a una actividad con una **fecha pasada**. | ❌ Falla |
+| **13** | Probar inscribirse a una actividad cuya fecha sea **3 o más días después** de la fecha actual. | ❌ Falla |
+| **14** | Probar inscribirse a una actividad ingresando un **correo electrónico inválido**. | ❌ Falla |
+
 
