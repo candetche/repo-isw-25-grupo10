@@ -12,7 +12,8 @@ from back.src.excepciones import (
     ErrorFaltaTalle,
     ErrorRestriccionEdad,
     ErrorParqueCerrado,
-    ErrorChoqueHorario
+    ErrorChoqueHorario,
+    ErrorAnticipacion,
 )
 
 @pytest.fixture
@@ -234,5 +235,30 @@ def test_10_inscripcion_multiple_sin_cupo_debe_fallar(setup_inscripcion):
         s['servicio'].inscribir(
             turno=s['turno_jardineria_poco_cupo'],  # Solo 2 cupos disponibles
             participantes=participantes_insuficientes,  # Intentamos inscribir 3
+            acepta_terminos=True
+        )
+
+
+def test_11_inscripcion_dia_lunes_falla(setup_inscripcion):
+    """Probar inscribirse a una actividad cuya fecha de inicio caiga en Lunes (falla)."""
+    s = setup_inscripcion
+
+    with pytest.raises(ErrorAnticipacion):
+        s['servicio'].inscribir(
+            turno=s['turno_lunes_cerrado'],
+            participantes=[s['visitante_beto_valido']],
+            acepta_terminos=True
+        )
+
+
+# TEST 12
+def test_12_inscripcion_25_diciembre_falla(setup_inscripcion):
+    """Probar inscribirse a una actividad cuya fecha de inicio caiga el 25 de Diciembre (falla)."""
+    s = setup_inscripcion
+
+    with pytest.raises(ErrorAnticipacion):
+        s['servicio'].inscribir(
+            turno=s['turno_25_dic'],
+            participantes=[s['visitante_beto_valido']],
             acepta_terminos=True
         )
