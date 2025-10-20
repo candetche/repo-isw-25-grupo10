@@ -270,7 +270,7 @@ def test_13_inscripcion_1_enero_falla(setup_inscripcion):
     
     with pytest.raises(ErrorAnticipacion):
         s['servicio'].inscribir(
-            turno=s['t_1_ene'],
+            turno=s['turno_1_ene'],
             participantes=[s['visitante_beto_valido']],
             acepta_terminos=True
         )
@@ -282,7 +282,7 @@ def test_14_inscripcion_anticipacion_excesiva_falla(setup_inscripcion):
     
     with pytest.raises(ErrorAnticipacion):
         s['servicio'].inscribir(
-            turno=s['t_anticipacion_excesiva'], # Fecha es +3 días
+            turno=s['turno_anticipacion_excesiva'], # Fecha es +3 días
             participantes=[s['visitante_beto_valido']],
             acepta_terminos=True
         )
