@@ -4,6 +4,10 @@ Este documento detalla los requisitos, condiciones y lineamientos para la inscri
 Incluye la gestión de cupos, horarios, requisitos de edad, términos y condiciones aplicables, y detalles sobre la interfaz y diseño.
 
 ---
+## USER STORY
+![user-story](practicos\tp6\doc\user-story.png)
+
+---
 
 ## 1️⃣ Cupos disponibles por actividad
 
@@ -38,51 +42,58 @@ Incluye la gestión de cupos, horarios, requisitos de edad, términos y condicio
 
 ## 4️⃣ Términos y Condiciones
 
-- Los **términos y condiciones** deberán mostrarse en un **popup/modal** al momento de la confirmación de la inscripción.  
-- A continuación se presenta el **modelo oficial** a utilizar:
+Los **términos y condiciones** deberán mostrarse en un **popup o modal** al momento de confirmar la inscripción.  
+El texto que se muestra a continuación constituye el **modelo oficial y obligatorio** a utilizar en todas las inscripciones del Parque Natural:
 
 ---
 
 # 📜 Términos y Condiciones de Participación
 
-Al inscribirse en cualquiera de las actividades ofrecidas por el **Parque Natural**, el/la participante declara haber leído, comprendido y aceptado los presentes términos y condiciones.
+Al inscribirse en cualquiera de las actividades ofrecidas por el **Parque Natural**, el/la participante declara haber leído, comprendido y aceptado los presentes términos y condiciones, comprometiéndose a cumplir con las normas de seguridad y convivencia establecidas por la organización.
 
 ---
 
-### 🏞️ Aceptación de riesgo
+### 🏞️ Aceptación de riesgos  
 Las actividades se desarrollan en entornos naturales y pueden implicar cierto nivel de riesgo físico.  
-El/la participante **asume voluntariamente dichos riesgos** y se compromete a seguir todas las indicaciones del personal del parque.
+El/la participante **asume voluntariamente dichos riesgos**, comprometiéndose a acatar las indicaciones del personal y a mantener una conducta responsable durante toda la actividad.
 
 ---
 
-### 🎟️ Condiciones de participación
+### 🎟️ Condiciones de participación  
 
 - No se permitirá la participación bajo efectos de alcohol, medicamentos o sustancias que alteren el estado físico o mental.  
-- Los menores de edad deben contar con autorización y supervisión de un adulto responsable.  
-- El parque podrá suspender o reprogramar actividades por razones climáticas o de seguridad.  
-- **Inscripción anticipada:** Una persona se puede inscribir a una actividad con hasta **2 días de anticipación**.
+- Los **menores de edad** deberán contar con la **autorización y supervisión** de un adulto responsable.  
+- El **Parque Natural** podrá **suspender, modificar o reprogramar** actividades por razones climáticas, de seguridad o fuerza mayor.  
+- La **inscripción anticipada** podrá realizarse hasta **2 días antes** de la fecha de la actividad.  
+- La participación queda sujeta a la **disponibilidad de cupos** al momento de la inscripción.
 
 ---
 
-### 🦺 Seguridad y equipamiento
-El uso del **equipamiento de seguridad provisto por el parque** es obligatorio en todas las actividades que así lo requieran.  
-El/la participante se compromete a **utilizarlo correctamente y devolverlo en las condiciones recibidas**.
+### 🦺 Seguridad y equipamiento  
+
+- El uso del **equipamiento de seguridad provisto por el parque** es **obligatorio** en todas las actividades que así lo requieran.  
+- El/la participante se compromete a **utilizar correctamente** dicho equipamiento y a **devolverlo en las mismas condiciones** en que fue entregado.  
+- Cualquier daño intencional o pérdida del equipo podrá generar cargos adicionales.
 
 ---
 
-### ⚖️ Responsabilidad
-El parque **no se hace responsable** por pérdidas o daños de objetos personales ni por lesiones derivadas del incumplimiento de las normas de seguridad.  
-La participación implica la **aceptación plena de estas condiciones** y la **renuncia a cualquier reclamo por daños** derivados de la práctica de las actividades.
+### ⚖️ Responsabilidad  
+
+El **Parque Natural** no se responsabiliza por pérdidas o daños de objetos personales, ni por lesiones o accidentes derivados del **incumplimiento de las normas de seguridad o de las indicaciones del personal**.  
+La inscripción implica la **aceptación total de estas condiciones** y la **renuncia expresa a cualquier reclamo por daños o perjuicios** ocasionados durante la participación en las actividades.
 
 ---
 
-### 🔒 Protección de datos personales
-Los datos brindados serán utilizados únicamente para la **gestión de la inscripción** y comunicaciones relacionadas con las actividades, conforme a la legislación vigente.
+### 🔒 Protección de datos personales  
+
+Los datos personales brindados serán utilizados exclusivamente para la **gestión de inscripciones** y comunicaciones vinculadas con las actividades, conforme a la legislación vigente en materia de protección de datos personales.  
+El Parque Natural garantiza la confidencialidad y seguridad de la información proporcionada por los participantes.
 
 ---
 
-### ✅ Confirmación
-Al confirmar la inscripción, el/la participante declara haber **leído y aceptado estos términos y condiciones en su totalidad**.
+### ✅ Confirmación  
+
+Al confirmar la inscripción, el/la participante declara haber **leído, comprendido y aceptado estos términos y condiciones en su totalidad**.
 
 ---
 
@@ -125,5 +136,4 @@ Al finalizar la inscripción:
 
 ---
 
-> 🪶 **Nota:**  
-> Todos los datos, horarios y cupos podrán ser modificados por la administración del parque sin previo aviso, por razones operativas o de seguridad.
+
