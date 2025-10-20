@@ -5,7 +5,7 @@ Incluye la gestión de cupos, horarios, requisitos de edad, términos y condicio
 
 ---
 ## USER STORY
-![user-story](practicos\tp6\doc\user-story.png)
+![user-story](user-story.png)
 
 ---
 
