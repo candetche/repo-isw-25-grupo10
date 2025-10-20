@@ -262,3 +262,28 @@ def test_12_inscripcion_25_diciembre_falla(setup_inscripcion):
             participantes=[s['visitante_beto_valido']],
             acepta_terminos=True
         )
+
+# TEST 13
+def test_13_inscripcion_1_enero_falla(setup_inscripcion):
+    """Probar inscribirse a una actividad cuya fecha de inicio caiga el 1 de Enero (falla)."""
+    s = setup_inscripcion
+    
+    with pytest.raises(ErrorAnticipacion):
+        s['servicio'].inscribir(
+            turno=s['t_1_ene'],
+            participantes=[s['visitante_beto_valido']],
+            acepta_terminos=True
+        )
+
+# TEST 14
+def test_14_inscripcion_anticipacion_excesiva_falla(setup_inscripcion):
+    """Probar inscribirse a una actividad cuya fecha de inicio sea 3 o más días después de la fecha actual (falla)."""
+    s = setup_inscripcion
+    
+    with pytest.raises(ErrorAnticipacion):
+        s['servicio'].inscribir(
+            turno=s['t_anticipacion_excesiva'], # Fecha es +3 días
+            participantes=[s['visitante_beto_valido']],
+            acepta_terminos=True
+        )
+
