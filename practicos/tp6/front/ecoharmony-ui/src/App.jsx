@@ -94,6 +94,9 @@ export default function App() {
   const TODAY_ISO = getTodayISO();
   const MAX_INSCRIPCION_ISO = getMaxISO();
 
+  const [step2Errors, setStep2Errors] = useState([]);
+
+
 
   const [step, setStep] = useState(1);
   const [regs, setRegs] = useState(PRESEED);
@@ -195,9 +198,12 @@ export default function App() {
     });
 
     if (errs.length) {
+      setStep2Errors(errs);
       alert("Corrige:\n- " + errs.join("\n- "));
       return;
     }
+    setStep2Errors([]);
+    
     setStep(3);
     return;
   }
@@ -329,10 +335,7 @@ export default function App() {
           {step < 3 && (
             <button
               className="btn"
-              disabled={
-              step === 1 && !puedeAvanzarStep1 ||
-              (step === 2 && step2Errors.length > 0)  
-            }
+              disabled={step === 1 && !puedeAvanzarStep1}
               onClick={goNext}
             >
               Siguiente
