@@ -11,3 +11,5 @@ class Inscripcion:
     visitantes: List[Visitante]
     total_personas: int
     acepta_terminos: bool
+    email_contacto: str
+

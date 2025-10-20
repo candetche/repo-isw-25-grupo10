@@ -15,6 +15,6 @@ class ServicioInscripcion:
         self.horario_cierre = time(18, 0)
         self.horario_apertura = time(9, 0)
 
-    def inscribir(self, turno: Turno, participantes: List[Visitante], acepta_terminos: bool) -> Optional[
+    def inscribir(self, turno: Turno, participantes: List[Visitante], acepta_terminos: bool, email_contacto: str) -> Optional[
         Inscripcion]:
         return None
