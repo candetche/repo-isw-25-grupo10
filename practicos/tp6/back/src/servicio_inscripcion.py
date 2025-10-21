@@ -42,25 +42,29 @@ class ServicioInscripcion:
         return True
 
     def _persistir_inscripcion(self, inscripcion: Inscripcion):
-        # Intentar persistir en el repositorio de forma flexible
-        if hasattr(self.repo, "inscripciones") and isinstance(self.repo.inscripciones, list):
-            self.repo.inscripciones.append(inscripcion)
-        elif hasattr(self.repo, "guardar"):
-            try:
-                self.repo.guardar(inscripcion)
-            except Exception:
-                # Fallback a otros posibles nombres
-                if hasattr(self.repo, "agregar"):
-                    self.repo.agregar(inscripcion)
-                else:
-                    raise
-        elif hasattr(self.repo, "agregar"):
-            self.repo.agregar(inscripcion)
-        else:
-            # Si no se puede persistir, al menos no romper el flujo; guardar en atributo temporal
-            if not hasattr(self.repo, "_inscripciones_temp"):
-                self.repo._inscripciones_temp = []
-            self.repo._inscripciones_temp.append(inscripcion)
+        self.repo.guardar_inscripcion(inscripcion)
+
+
+    #def _persistir_inscripcion(self, inscripcion: Inscripcion):
+    #    # Intentar persistir en el repositorio de forma flexible
+    #    if hasattr(self.repo, "inscripciones") and isinstance(self.repo.inscripciones, list):
+    #        self.repo.inscripciones.append(inscripcion)
+    #    elif hasattr(self.repo, "guardar"):
+    #        try:
+    #            self.repo.guardar(inscripcion)
+    #        except Exception:
+    #            # Fallback a otros posibles nombres
+    #            if hasattr(self.repo, "agregar"):
+    #                self.repo.agregar(inscripcion)
+    #            else:
+    #                raise
+    #    elif hasattr(self.repo, "agregar"):
+    #        self.repo.agregar(inscripcion)
+    #    else:
+    #        # Si no se puede persistir, al menos no romper el flujo; guardar en atributo temporal
+    #        if not hasattr(self.repo, "_inscripciones_temp"):
+    #            self.repo._inscripciones_temp = []
+    #        self.repo._inscripciones_temp.append(inscripcion)
 
     # python
     # archivo: back/src/servicio_inscripcion.py
