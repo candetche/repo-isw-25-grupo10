@@ -37,3 +37,57 @@ Si la Opción A falla debido a problemas con el PATH, utiliza:
 ```bash
 python -m pytest -v back/tests/test_inscripcion.py
  ```
+
+4. Ejecución del Programa
+
+El proyecto se divide en dos partes: backend (API) y frontend (interfaz de usuario).
+Ambos deben ejecutarse de forma independiente en terminales separadas.
+
+🖥️ Backend (FastAPI con Uvicorn)
+
+Abre una terminal en la carpeta raíz del proyecto:
+
+C:\Users\roffe\OneDrive\Desktop\4to\ISW\repo\repo-isw-25-grupo10\practicos\tp6
+
+
+Ejecuta el siguiente comando:
+
+python -m uvicorn back.app:app --reload
+
+
+El servidor se iniciará en modo desarrollo en:
+
+http://127.0.0.1:8000
+
+
+Puedes verificar la documentación interactiva de la API en:
+
+Swagger UI: http://127.0.0.1:8000/docs
+
+Redoc: http://127.0.0.1:8000/redoc
+
+🌐 Frontend (React + Vite)
+
+Abre una nueva terminal en la carpeta del frontend:
+
+C:\Users\roffe\OneDrive\Desktop\4to\ISW\repo\repo-isw-25-grupo10\practicos\tp6\front\ecoharmony-ui
+
+
+Instala las dependencias (solo la primera vez):
+
+npm install
+
+
+Inicia el servidor de desarrollo:
+
+npm run dev
+
+
+El sitio estará disponible en:
+
+http://localhost:5173
+
+🔄 Integración entre Front y Back
+
+El frontend se comunica con la API en http://127.0.0.1:8000.
+Asegúrate de tener ambos servidores corriendo simultáneamente para que las funcionalidades de inscripción funcionen correctamente.

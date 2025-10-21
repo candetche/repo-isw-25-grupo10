@@ -1,4 +1,4 @@
-from repositorio.base import RepositorioBase
+from back.src.repositorios.base import RepositorioBase
 
 class RepositorioActividad(RepositorioBase):
     def obtener_todas(self):

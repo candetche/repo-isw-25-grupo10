@@ -43,9 +43,9 @@ cursor.execute("""
     CREATE TABLE IF NOT EXISTS Inscripcion (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         turno_id INTEGER NOT NULL,
-        mail TEXT NOT NULL,
+        email_contacto TEXT NOT NULL,
         total_personas INTEGER NOT NULL,
-        acepto_terminos INTEGER NOT NULL DEFAULT 0,
+        acepta_terminos INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (turno_id) REFERENCES Turno(id)
     )
 """)
@@ -112,34 +112,36 @@ def generar_turnos(cursor):
     """Genera turnos nuevos según las reglas del parque."""
     hoy = datetime.now().date()
     fecha_limite = hoy + timedelta(weeks=HORIZONTE_SEMANAS)
-    ultima_fecha = obtener_ultima_fecha(cursor)
 
-    if ultima_fecha and ultima_fecha >= fecha_limite:
-        print(f"✅ Ya existen turnos hasta {ultima_fecha}")
-        return
-
-    fecha_inicio = (ultima_fecha + timedelta(days=1)) if ultima_fecha else hoy
-    print(f"🧩 Generando turnos desde {fecha_inicio} hasta {fecha_limite}...")
+    print(f"🧩 Generando turnos desde {hoy} hasta {fecha_limite}...")
 
     cursor.execute("SELECT id, capacidad_maxima FROM Actividad")
     actividades = cursor.fetchall()
 
     for actividad_id, capacidad in actividades:
-        fecha = fecha_inicio
+        fecha = hoy
         while fecha <= fecha_limite:
             # Saltar lunes y feriados
             if fecha.weekday() not in DIAS_CERRADOS and fecha.strftime("%Y-%m-%d") not in FERIADOS:
-                hora = datetime.combine(fecha, HORARIO_INICIO)
-                fin = datetime.combine(fecha, HORARIO_FIN)
+                # Verificar si ya existen turnos para esa fecha y actividad
+                cursor.execute("SELECT COUNT(*) FROM Turno WHERE actividad_id=? AND fecha=?", (actividad_id, fecha))
+                ya_existen = cursor.fetchone()[0]
 
-                while hora < fin:
-                    cursor.execute("""
-                        INSERT INTO Turno (actividad_id, fecha, hora, cupo_disponible)
-                        VALUES (?, ?, ?, ?)
-                    """, (actividad_id, fecha.strftime("%Y-%m-%d"), hora.strftime("%H:%M"), capacidad))
-                    hora += timedelta(minutes=DURACION_TURNO_MIN)
+                if ya_existen == 0:
+                    hora = datetime.combine(fecha, HORARIO_INICIO)
+                    fin = datetime.combine(fecha, HORARIO_FIN)
+
+                    while hora < fin:
+                        cursor.execute("""
+                            INSERT INTO Turno (actividad_id, fecha, hora, cupo_disponible)
+                            VALUES (?, ?, ?, ?)
+                        """, (actividad_id, fecha.strftime("%Y-%m-%d"), hora.strftime("%H:%M"), capacidad))
+                        hora += timedelta(minutes=DURACION_TURNO_MIN)
+
             fecha += timedelta(days=1)
+
     print("✅ Turnos generados correctamente.")
+
 
 # ========================================
 # EJECUCIÓN DEL SCRIPT

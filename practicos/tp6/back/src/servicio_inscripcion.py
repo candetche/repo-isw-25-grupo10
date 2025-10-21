@@ -4,7 +4,7 @@ from datetime import date, time
 from back.src.modelos.inscripcion import Inscripcion
 from back.src.modelos.turno import Turno
 from back.src.modelos.visitante import Visitante
-from back.src.repositorio import RepositorioEnMemoria
+
 from back.src.excepciones import (
     ErrorSinCupo,
     ErrorTerminosNoAceptados,
@@ -17,6 +17,7 @@ from back.src.excepciones import (
     ErrorEmailInvalido,
     ErrorFechaPasada,
 )
+from back.src.repositorios.base import RepositorioEnMemoria
 
 
 class ServicioInscripcion:

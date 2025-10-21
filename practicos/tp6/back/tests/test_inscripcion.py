@@ -1,7 +1,7 @@
 import pytest
 from datetime import date, time, timedelta
 from back.src.servicio_inscripcion import ServicioInscripcion
-from back.src.repositorio.base import RepositorioEnMemoria
+from back.src.repositorios.base import RepositorioEnMemoria
 from back.src.modelos.visitante import Visitante
 from back.src.modelos.turno import Turno
 from back.src.modelos.inscripcion import Inscripcion

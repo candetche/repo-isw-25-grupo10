@@ -1,4 +1,4 @@
-from base import RepositorioBase
+from back.src.repositorios.base import RepositorioBase
 
 class VisitanteRepo(RepositorioBase):
     def obtener_por_dni(self, dni):

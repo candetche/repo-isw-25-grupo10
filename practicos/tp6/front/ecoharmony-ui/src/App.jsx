@@ -1,12 +1,43 @@
 // src/App.jsx
 import React, { useMemo, useState } from "react";
 
-/** ====== Datos base / reglas ====== */
-const ACTIVIDADES = ["Safari", "Palestra", "Jardinería", "Tirolesa"];
-const CUPOS = { Safari: 8, Palestra: 12, "Jardinería": 12, Tirolesa: 10 };
-const REQUIERE_TALLE = new Set(["Palestra", "Tirolesa"]);
-const TALLES = ["XS", "S", "M", "L", "XL", "XXL"];
-const EDAD_MIN = { Safari: 0, "Jardinería": 0, Palestra: 12, Tirolesa: 8 };
+async function apiInscribirse(data) {
+  try {
+    const res = await fetch("http://127.0.0.1:8000/api/inscribirse", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      console.error("Error backend:", err);
+      alert("Error: " + (err.detail || "No se pudo procesar la inscripción."));
+      return null;
+    }
+
+    const json = await res.json();
+    return json;
+  } catch (e) {
+    console.error("Fallo de red:", e);
+    alert("No se pudo conectar con el servidor.");
+    return null;
+  }
+}
+
+async function apiGetActividades() {
+  const res = await fetch("http://127.0.0.1:8000/api/actividades");
+  if (!res.ok) throw new Error("No se pudieron obtener las actividades");
+  return res.json();
+}
+
+async function apiGetTurnos(fechaISO) {
+  const url = `http://127.0.0.1:8000/api/turnos?fecha=${fechaISO}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("No se pudieron obtener los turnos");
+  return res.json();
+}
+
 
 
 // Helper simple de email
@@ -90,7 +121,7 @@ function existeSolapado(regs, dni, fechaISO, hora) {
 /** ====== App ====== */
 export default function App() {
 
-  const [fechaErr, setFechaErr] = useState("");     
+  const [fechaErr, setFechaErr] = useState("");
   const TODAY_ISO = getTodayISO();
   const MAX_INSCRIPCION_ISO = getMaxISO();
 
@@ -101,7 +132,51 @@ export default function App() {
   const [step, setStep] = useState(1);
   const [regs, setRegs] = useState(PRESEED);
 
-  
+  const [actividades, setActividades] = useState([]);
+  const [turnos, setTurnos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function handleSubmit() {
+    if (isSubmitting) return; // evita doble envío
+    setIsSubmitting(true);
+
+    try {
+      const result = await apiInscribirse(payload);
+      alert(result.mensaje);
+    } catch (e) {
+      alert(e.message || "Error al inscribirse.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+
+  React.useEffect(() => {
+    async function fetchData() {
+      try {
+        const acts = await apiGetActividades();
+        setActividades(acts);
+
+        const hoy = getTodayISO();
+        const t = await apiGetTurnos(hoy);
+        setTurnos(t);
+
+        console.log("Actividades cargadas:", acts);
+        console.log("Turnos cargados:", t);
+      } catch (e) {
+        console.error("Error cargando datos iniciales:", e);
+        alert("No se pudieron obtener los datos del servidor.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
 
   // Step 1
   const [actividad, setActividad] = useState("");
@@ -121,7 +196,8 @@ export default function App() {
   const [okMsg, setOkMsg] = useState("");
 
   // Derivados
-  const cuposTotales = actividad ? CUPOS[actividad] : 0;
+  const actividadSeleccionada = actividades.find(a => a.nombre === actividad);
+  const cuposTotales = actividadSeleccionada ? actividadSeleccionada.cupos : 0;
   const ocupados = useMemo(
     () => countOcupados(regs, actividad, fechaISO, hora),
     [regs, actividad, fechaISO, hora]
@@ -134,12 +210,12 @@ export default function App() {
   const puedeAvanzarStep1 =
     actividad && fechaISO && hora && !fechaErr && cantidad > 0 && cantidad <= cuposRestantes;
 
-  function goNext() {
+  async function goNext() {
     if (step === 1 && !puedeAvanzarStep1) return;
 
     if (step === 1) {
 
-      // Re-chequeo: si la fecha es HOY, el horario debe ser FUTURO, 
+      // Re-chequeo: si la fecha es HOY, el horario debe ser FUTURO,
       // por si dejaron pasar el tiempo entre elegir y “Siguiente”
       if (fechaISO === TODAY_ISO && hhmmToMinutes(hora) <= hhmmToMinutes(nowHHMM())) {
         setFechaErr("El horario seleccionado ya no es válido para hoy. Elegí otro horario futuro.");
@@ -147,7 +223,9 @@ export default function App() {
       }
 
       // generar filas para participantes
-      const requiereTalle = REQUIERE_TALLE.has(actividad);
+      const actSel = actividades.find(a => a.nombre === actividad);
+      const requiereTalle = actSel ? actSel.requiere_talle : false;
+
       const arr = Array.from({ length: Number(cantidad) }, () => ({
         nombre: "",
         dni: "",
@@ -171,17 +249,20 @@ export default function App() {
       const dniNorm = normalizeDNI(p.dni);
       const edadNum = Number(p.edad); // <-- nombre distinto para evitar redeclaración
 
+      const actividadSel = actividades.find(a => a.nombre === actividad);
+      const edadMinima = actividadSel ? actividadSel.edad_min : 0;
+      const requiereTalle = actividadSel ? actividadSel.requiere_talle : false;
+
       // Reglas existentes
       if (!nombreOk) errs.push(`Fila ${idx + 1}: nombre es requerido`);
       if (!/^\d{6,10}$/.test(dniNorm))
         errs.push(`Fila ${idx + 1}: DNI debe tener 6 a 10 dígitos`);
       if (!Number.isFinite(edadNum) || edadNum < 0)
         errs.push(`Fila ${idx + 1}: edad inválida`);
-      if (edadNum < (EDAD_MIN[actividad] ?? 0))
-        errs.push(`Fila ${idx + 1}: edad mínima para ${actividad} es ${EDAD_MIN[actividad]}`);
-      if (REQUIERE_TALLE.has(actividad) && !p.talle)
+      if (edadNum < edadMinima)
+        errs.push(`Fila ${idx + 1}: edad mínima para ${actividad} es ${edadMinima}`);
+      if (requiereTalle && !p.talle)
         errs.push(`Fila ${idx + 1}: talle es obligatorio en ${actividad}`);
-
       // NUEVO: DNI duplicado en esta inscripción
       if (dniNorm) {
         if (dniIndex.has(dniNorm)) {
@@ -203,41 +284,51 @@ export default function App() {
       return;
     }
     setStep2Errors([]);
-    
+
     setStep(3);
+    if (loading) {
+      return <div className="container"><p>Cargando datos del parque...</p></div>;
+    }
+
     return;
   }
 
 
     if (step === 3) {
-      if (!isValidEmail(email)) {
-        alert("Ingresá un email válido para la confirmación.");
-        return;
-      }
-      if (!aceptaTC) {
-        alert("Debes aceptar Términos y Condiciones.");
-        return;
-      }
-      // Re-chequeo de cupos por carrera
-      const ocupadosAhora = countOcupados(regs, actividad, fechaISO, hora);
-      const resta = CUPOS[actividad] - ocupadosAhora;
-      if (resta < participantes.length) {
-        alert(`Hubo cambios en la disponibilidad. Quedan ${resta} cupos.`);
-        setStep(1);
-        return;
-      }
-      // “persistir” en memoria
-      const nuevas = participantes.map((p) => ({
-        actividad,
-        fechaISO,
-        hora,
-        dni: String(p.dni),
-      }));
-      setRegs((prev) => [...prev, ...nuevas]);
-      setOkMsg(
-        `¡Inscripción confirmada! ${participantes.length} lugar(es) reservado(s) para ${actividad} el ${fechaISO} a las ${hora}. Enviaremos la confirmación a ${email}.`
-      );
+        if (!isValidEmail(email)) {
+            alert("Ingresá un email válido para la confirmación.");
+            return;
+        }
+        if (!aceptaTC) {
+            alert("Debes aceptar Términos y Condiciones.");
+            return;
+        }
+
+        const payload = {
+            actividad,
+            fecha: fechaISO,
+            hora,
+            email,
+            acepta_terminos: aceptaTC,
+            participantes: participantes.map((p) => ({
+                nombre: p.nombre,
+                dni: Number(p.dni),
+                edad: Number(p.edad),
+                talle: p.talle || null,
+            })),
+        };
+        console.log("Payload enviado al backend:", payload);
+
+
+        const result = await apiInscribirse(payload);
+
+        if (result) {
+            setOkMsg(
+              `¡Inscripción confirmada! ${participantes.length} lugar(es) reservado(s) para ${actividad} el ${fechaISO} a las ${hora}.`
+            );
+        }
     }
+
   }
 
   function goBack() {
@@ -295,9 +386,11 @@ export default function App() {
             cuposRestantes={cuposRestantes}
             todayISO={TODAY_ISO}
             maxISO={MAX_INSCRIPCION_ISO}
-            fechaErr={fechaErr} 
+            fechaErr={fechaErr}
             setFechaErr={setFechaErr}
             regs={regs}
+            actividades={actividades}
+            turnos={turnos}
 
           />
         )}
@@ -308,6 +401,8 @@ export default function App() {
             participantes={participantes}
             setParticipantes={setParticipantes}
             errors={step2Errors}
+            actividades={actividades}
+
           />
         )}
 
@@ -344,11 +439,21 @@ export default function App() {
           {step === 3 && (
             <button
               className="btn"
-              onClick={goNext}
-              disabled={!aceptaTC || !isValidEmail(email)}
+              onClick={async () => {
+                if (isSubmitting) return; // Evita doble envío
+                setIsSubmitting(true);
+
+                try {
+                  await goNext(); // Ejecuta el flujo normal (valida y llama al backend)
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              disabled={!aceptaTC || !isValidEmail(email) || isSubmitting}
             >
-              Confirmar inscripción
+              {isSubmitting ? "Enviando..." : "Confirmar inscripción"}
             </button>
+
           )}
         </div>
       </div>
@@ -380,11 +485,13 @@ function Step1({
   cantidad,
   setCantidad,
   cuposRestantes,
-  todayISO, 
+  todayISO,
   maxISO,
-  fechaErr, 
+  fechaErr,
   setFechaErr,
   regs,
+  actividades,
+  turnos,
 }) {
   const [err, setErr] = useState("");
 
@@ -431,7 +538,7 @@ function Step1({
   // Horarios a mostrar:
   // - Si la fecha es hoy, filtrar a horarios "posteriores al ahora".
   // - Si hay error de fecha, deshabilitar el select.
-  
+
   // 1) Base: todos los slots del día
   let baseSlots = SLOTS;
 
@@ -441,21 +548,48 @@ function Step1({
   }
 
   // 3) Ocultar slots sin cupo (solo si ya hay actividad + fecha válidas)
-  let availableSlots = baseSlots;
+  let availableSlots = [];
+
   if (actividad && fechaISO && !fechaErr) {
-    availableSlots = baseSlots.filter(s => {
-      const ocup = countOcupados(regs, actividad, fechaISO, s);
-      const total = CUPOS[actividad] ?? 0;
-      return (total - ocup) > 0; // mostrar solo si quedan cupos
-    });
+    const actSel = actividades.find(a => a.nombre === actividad);
+    if (actSel && fechaISO) {
+      console.log("🎯 DEBUG - Fecha seleccionada:", fechaISO);
+      console.log("🎯 DEBUG - Actividad seleccionada (id):", actSel.id);
+      console.log("🎯 DEBUG - Turnos totales recibidos:", turnos.length);
+
+
+      const fechaSel = fechaISO.trim().slice(0, 10); // asegurar formato AAAA-MM-DD
+
+      availableSlots = turnos
+        .filter((t) => {
+    // Normalizamos ambos valores para evitar diferencias de formato o espacios
+          const fechaTurno = String(t.fecha).split("T")[0].trim();
+          const fechaSel = String(fechaISO).trim();
+
+          return (
+            Number(t.actividad_id) === Number(actSel.id) && // aseguramos mismo tipo
+            fechaTurno === fechaSel &&
+            (t.cupos_disponibles > 0 || t.cupo_disponible > 0)
+          );
+        })
+        .map((t) => t.hora);
+
+      console.log("Slots resultantes:", availableSlots);
+    }
+
   }
 
-  // 4) Si el slot seleccionado quedó inválido (p.ej. cambiaste fecha/actividad)
-  //    o se quedó sin cupo, lo limpiamos para que el usuario elija otro
-  if (hora && !availableSlots.includes(hora)) {
-    setHora("");
+
+  // 🔧 Si la fecha es hoy, mostrar solo horarios futuros
+  if (fechaISO === todayISO) {
+    availableSlots = availableSlots.filter(
+      (s) => hhmmToMinutes(s) > hhmmToMinutes(nowHHMM())
+    );
   }
-  
+
+
+
+
   return (
     <>
       <div className="row">
@@ -463,7 +597,11 @@ function Step1({
           <label>Actividad *</label>
           <select value={actividad} onChange={onActividadChange}>
             <option value="">Selecciona una actividad</option>
-            {ACTIVIDADES.map(a => <option key={a} value={a}>{a}</option>)}
+            {actividades.map(a => (
+              <option key={a.nombre} value={a.nombre}>
+                {a.nombre}
+              </option>
+            ))}
           </select>
           <p className="helper">Cupos: Safari 8 · Palestra 12 · Jardinería 12 · Tirolesa 10</p>
         </div>
@@ -526,14 +664,18 @@ function Step1({
 }
 
 /** ====== Step 2: Participantes ====== */
-function Step2({ actividad, participantes, setParticipantes }) {
-  const requiereTalle = REQUIERE_TALLE.has(actividad);
+function Step2({ actividad, participantes, setParticipantes, actividades }) {
+  // Buscar si la actividad seleccionada requiere talle
+  const actSel = actividades.find(a => a.nombre === actividad);
+  const requiereTalle = actSel ? actSel.requiere_talle : false;
 
   function update(i, field, value) {
     const copy = [...participantes];
     copy[i] = { ...copy[i], [field]: value };
     setParticipantes(copy);
   }
+
+  const TALLES = ["XS", "S", "M", "L", "XL", "XXL"];
 
   return (
     <>
@@ -586,14 +728,12 @@ function Step2({ actividad, participantes, setParticipantes }) {
               {requiereTalle && (
                 <td>
                   <select
-                    value={p.talle}
+                    value={p.talle || ""}
                     onChange={(e) => update(i, "talle", e.target.value)}
                   >
-                    <option value="">Selecciona talle</option>
+                    <option value="">Talle</option>
                     {TALLES.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
+                      <option key={t} value={t}>{t}</option>
                     ))}
                   </select>
                 </td>
@@ -607,13 +747,12 @@ function Step2({ actividad, participantes, setParticipantes }) {
       <ul className="helper" style={{ margin: "0 0 0 18px" }}>
         <li>Safari/Jardinería: sin límite de edad.</li>
         <li>Palestra: mínimo 12 años. Tirolesa: mínimo 8 años.</li>
-        <li>
-          Mismo DNI no puede estar inscripto en otra actividad a la misma hora.
-        </li>
+        <li>Mismo DNI no puede estar inscripto en otra actividad a la misma hora.</li>
       </ul>
     </>
   );
 }
+
 
 /** ====== Step 3: Confirmación + T&C + Email ====== */
 function Step3({
