@@ -1,11 +1,11 @@
 # python
 from typing import List, Optional, Dict
 from datetime import date, time
-from .modelos.inscripcion import Inscripcion
-from .modelos.turno import Turno
-from .modelos.visitante import Visitante
-from .repositorio import RepositorioEnMemoria
-from .excepciones import (
+from back.src.modelos.inscripcion import Inscripcion
+from back.src.modelos.turno import Turno
+from back.src.modelos.visitante import Visitante
+from back.src.repositorio import RepositorioEnMemoria
+from back.src.excepciones import (
     ErrorSinCupo,
     ErrorTerminosNoAceptados,
     ErrorHorarioInvalido,
