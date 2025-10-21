@@ -1,18 +1,21 @@
-from base import RepositorioBase
+from .modelos import Turno
+from .base import RepositorioBase
 
 class RepositorioTurno(RepositorioBase):
+    def __init__(self):
+        super().__init__(Turno)
+
     def obtener_por_fecha(self, fecha):
-        return self.ejecutar("SELECT * FROM Turno WHERE fecha = ?", (fecha,), fetchall=True)
-    
+        return list(self.modelo.select().where(self.modelo.fecha == fecha))
+
     def obtener_por_actividad_y_fecha(self, actividad_id, fecha_a, fecha_b):
-        return self.ejecutar("""SELECT * FROM Turno 
-            WHERE actividad_id = ?
-            AND fecha >= ? 
-            AND fecha <= ?
-            """, (actividad_id, fecha_a, fecha_b), fetchall=True)
+        return list(self.modelo
+                   .select()
+                   .where(
+                       (self.modelo.actividad_id == actividad_id) & 
+                       (self.modelo.fecha >= fecha_a) & 
+                       (self.modelo.fecha <= fecha_b)
+                   ))
 
     def actualizar_cupo(self, turno_id, nuevo_cupo):
-        self.ejecutar("""
-            UPDATE Turno SET cupo_disponible = ?
-            WHERE id = ?
-        """, (nuevo_cupo, turno_id), commit=True)
+        return self.actualizar(turno_id, cupo_disponible=nuevo_cupo)

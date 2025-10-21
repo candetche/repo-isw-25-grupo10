@@ -1,45 +1,31 @@
-import sqlite3
-from typing import List
-from pathlib import Path
+from peewee import *
+from .modelos import db
 
-# --- RUTA DINÁMICA ---
-DIRECTORIO_SCRIPT = Path(__file__).resolve().parent 
-DB_PATH = DIRECTORIO_SCRIPT.parent.parent / "db" / "bd_ecopark.db"
-
+## Repositorio base para operaciones comunes
 class RepositorioBase:
-    def __init__(self):
-        self.db_path = DB_PATH
-    
+    def __init__(self, modelo):
+        self.modelo = modelo
+        self.db = db
+
     def get_connection(self):
-        return sqlite3.connect(self.db_path)
+        return self.db
+
+    def ejecutar(self, query):
+        with self.db.atomic():
+            return query.execute()
+
+    def obtener_por_id(self, id):
+        return self.modelo.get_or_none(self.modelo.id == id)
+
+    def obtener_todos(self):
+        return list(self.modelo.select())
     
-    def ejecutar(self, query, params=(), fetchone=False, fetchall=False, commit=False):
-        conn = self.get_connection()
-        cur = conn.cursor()
-
-        cur.execute(query, params)
-
-        result = None
-        if fetchone:
-            result = cur.fetchone()
-        elif fetchall:
-            result = cur.fetchall()
-
-        if commit:
-            conn.commit()
-
-        conn.close()
-        return result
-
 
 # Repositorio en memoria para pruebas
-from back.src.modelos.inscripcion import Inscripcion
-class RepositorioEnMemoria(RepositorioBase):
+class RepositorioEnMemoria:
     """Mock de repositorio que guarda las inscripciones en una lista."""
-
-    def __init__(self, inscripciones: List[Inscripcion] = None):
+    def __init__(self, inscripciones=None):
         self.inscripciones = inscripciones or []
 
-    # Método para simular la persistencia que usará el servicio
-    def guardar_inscripcion(self, inscripcion: Inscripcion):
+    def guardar_inscripcion(self, inscripcion):
         self.inscripciones.append(inscripcion)
