@@ -22,12 +22,13 @@ from back.src.excepciones import (
 class ServicioInscripcion:
     """Servicio de la lógica de negocio para gestionar inscripciones."""
 
-    def __init__(self, setup_actividades: Dict, turnos_disponibles: List[Turno], repo: RepositorioEnMemoria):
+    def __init__(self, setup_actividades: Dict, turnos_disponibles: List[Turno], repo: RepositorioEnMemoria, fecha_actual: Optional[date] = None):
         self.setup_actividades = setup_actividades
         self.turnos_disponibles = {t.id: t for t in turnos_disponibles}
         self.repo = repo
         self.horario_cierre = time(18, 0)
         self.horario_apertura = time(9, 0)
+        self.fecha_actual = fecha_actual or date.today()
 
     def _validar_email(self, email: str) -> bool:
         if not isinstance(email, str):
@@ -72,7 +73,7 @@ class ServicioInscripcion:
         if not acepta_terminos:
             raise ErrorTerminosNoAceptados("Debe aceptar los términos y condiciones.")
 
-        hoy = date.today()
+        hoy = self.fecha_actual
 
         # 2) Fecha pasada
         if turno.fecha < hoy:
@@ -80,8 +81,13 @@ class ServicioInscripcion:
 
         # 3) Parque cerrado el lunes
         # Ajuste: no bloquear si el turno es para el día de hoy (evita que ejecutar tests un Lunes falle).
-        if turno.fecha.weekday() == 0:
-            raise ErrorParqueCerrado("El parque está cerrado los días lunes.")
+        # Parque cerrado los lunes, el 1 de enero y el 31 de diciembre
+        if (
+                turno.fecha.weekday() == 0
+                or (turno.fecha.month == 1 and turno.fecha.day == 1)
+                or (turno.fecha.month == 12 and turno.fecha.day == 31)
+        ):
+            raise ErrorParqueCerrado("El parque está cerrado los días lunes, 1 de enero y 31 de diciembre.")
 
         # ... el resto de la función permanece igual ...
 
