@@ -4,5 +4,10 @@
 
 ---
 
-## 📝 Estilo de código
+## 📝 Estilo de código - Backend
 - Estilo de código: PEP8
+
+---
+
+## 📝 Estilo de código - Frontend
+
