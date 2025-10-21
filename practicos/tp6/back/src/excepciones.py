@@ -22,3 +22,12 @@ class ErrorParqueCerrado(ValidacionError):
 class ErrorChoqueHorario(ValidacionError):
     """El participante ya está inscrito en otro turno que choca en horario."""
     pass
+class ErrorAnticipacion(ValidacionError):
+    """La fecha de la inscripción no cumple las reglas de cierre o anticipación."""
+    pass
+class ErrorEmailInvalido(ValidacionError):
+    """El formato del correo electrónico de contacto es inválido."""
+    pass
+class ErrorFechaPasada(ValidacionError):
+    """La fecha del turno ya pasó."""
+    pass

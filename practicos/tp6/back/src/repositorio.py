@@ -1,7 +1,6 @@
 # backend/src/repositorio.py
 from typing import List
-# Se asume que Inscripcion se importará desde .modelos
-from .modelos.inscripcion import Inscripcion
+from back.src.modelos.inscripcion import Inscripcion
 
 
 
