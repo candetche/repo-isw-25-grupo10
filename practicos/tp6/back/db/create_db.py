@@ -4,11 +4,11 @@ from datetime import datetime, timedelta, time
 # ========================================
 # CONEXIÓN Y CREACIÓN DE TABLAS
 # ========================================
-# Para correr este script, asegurarse de estar parado 
-# sobre la carpeta de BD y ejecutar: 
+# Para correr este script, asegurarse de estar parado
+# sobre la carpeta de BD y ejecutar:
 #       python create_db.py
-# Esto creará la base de datos y las tablas necesarias 
-# si no existen y cargará las ACTIVIDADES y TURNOS de 
+# Esto creará la base de datos y las tablas necesarias
+# si no existen y cargará las ACTIVIDADES y TURNOS de
 # las próximas 4 semanas.
 # ========================================
 RUTA_BD = "./bd_ecopark.db"
@@ -18,7 +18,8 @@ conn = sqlite3.connect(RUTA_BD)
 cursor = conn.cursor()
 
 # Crear tablas si no existen
-cursor.execute("""
+cursor.execute(
+    """
     CREATE TABLE IF NOT EXISTS Actividad (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
@@ -26,9 +27,11 @@ cursor.execute("""
         requiere_vestimenta INTEGER NOT NULL DEFAULT 0,
         edad_minima INTEGER
     )
-""")
+"""
+)
 
-cursor.execute("""
+cursor.execute(
+    """
     CREATE TABLE IF NOT EXISTS Turno (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         actividad_id INTEGER NOT NULL,
@@ -37,9 +40,11 @@ cursor.execute("""
         cupo_disponible INTEGER NOT NULL,
         FOREIGN KEY (actividad_id) REFERENCES Actividad(id)
     )
-""")
+"""
+)
 
-cursor.execute("""
+cursor.execute(
+    """
     CREATE TABLE IF NOT EXISTS Inscripcion (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         turno_id INTEGER NOT NULL,
@@ -48,9 +53,11 @@ cursor.execute("""
         acepta_terminos INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (turno_id) REFERENCES Turno(id)
     )
-""")
+"""
+)
 
-cursor.execute("""
+cursor.execute(
+    """
     CREATE TABLE IF NOT EXISTS Visitante (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         inscripcion_id INTEGER NOT NULL,
@@ -60,7 +67,8 @@ cursor.execute("""
         talle TEXT,
         FOREIGN KEY (inscripcion_id) REFERENCES Inscripcion(id)
     )
-""")
+"""
+)
 
 conn.commit()
 
@@ -80,26 +88,31 @@ HORIZONTE_SEMANAS = 4  # generar turnos para las próximas 4 semanas
 # ========================================
 
 ACTIVIDADES_PREDEFINIDAS = [
-    ("Safari", 8, 0, None),        # (nombre, cupo, requiere_vestimenta, edad_minima)
+    ("Safari", 8, 0, None),  # (nombre, cupo, requiere_vestimenta, edad_minima)
     ("Palestra", 12, 1, 12),
     ("Jardinería", 12, 0, None),
-    ("Tirolesa", 10, 1, 8)
+    ("Tirolesa", 10, 1, 8),
 ]
 
 # ========================================
 # FUNCIONES AUXILIARES
 # ========================================
 
+
 def asegurar_actividades(cursor):
     """Inserta las actividades base si no existen."""
     for nombre, cupo, requiere_vestimenta, edad_minima in ACTIVIDADES_PREDEFINIDAS:
         cursor.execute("SELECT id FROM Actividad WHERE nombre = ?", (nombre,))
         if cursor.fetchone() is None:
-            cursor.execute("""
+            cursor.execute(
+                """
                 INSERT INTO Actividad (nombre, capacidad_maxima, requiere_vestimenta, edad_minima)
                 VALUES (?, ?, ?, ?)
-            """, (nombre, cupo, requiere_vestimenta, edad_minima))
+            """,
+                (nombre, cupo, requiere_vestimenta, edad_minima),
+            )
     print("✅ Actividades base verificadas o insertadas correctamente.")
+
 
 def obtener_ultima_fecha(cursor):
     cursor.execute("SELECT MAX(fecha) FROM Turno")
@@ -107,6 +120,7 @@ def obtener_ultima_fecha(cursor):
     if resultado:
         return datetime.strptime(resultado, "%Y-%m-%d").date()
     return None
+
 
 def generar_turnos(cursor):
     """Genera turnos nuevos según las reglas del parque."""
@@ -122,9 +136,15 @@ def generar_turnos(cursor):
         fecha = hoy
         while fecha <= fecha_limite:
             # Saltar lunes y feriados
-            if fecha.weekday() not in DIAS_CERRADOS and fecha.strftime("%Y-%m-%d") not in FERIADOS:
+            if (
+                fecha.weekday() not in DIAS_CERRADOS
+                and fecha.strftime("%Y-%m-%d") not in FERIADOS
+            ):
                 # Verificar si ya existen turnos para esa fecha y actividad
-                cursor.execute("SELECT COUNT(*) FROM Turno WHERE actividad_id=? AND fecha=?", (actividad_id, fecha))
+                cursor.execute(
+                    "SELECT COUNT(*) FROM Turno WHERE actividad_id=? AND fecha=?",
+                    (actividad_id, fecha),
+                )
                 ya_existen = cursor.fetchone()[0]
 
                 if ya_existen == 0:
@@ -132,10 +152,18 @@ def generar_turnos(cursor):
                     fin = datetime.combine(fecha, HORARIO_FIN)
 
                     while hora < fin:
-                        cursor.execute("""
+                        cursor.execute(
+                            """
                             INSERT INTO Turno (actividad_id, fecha, hora, cupo_disponible)
                             VALUES (?, ?, ?, ?)
-                        """, (actividad_id, fecha.strftime("%Y-%m-%d"), hora.strftime("%H:%M"), capacidad))
+                        """,
+                            (
+                                actividad_id,
+                                fecha.strftime("%Y-%m-%d"),
+                                hora.strftime("%H:%M"),
+                                capacidad,
+                            ),
+                        )
                         hora += timedelta(minutes=DURACION_TURNO_MIN)
 
             fecha += timedelta(days=1)

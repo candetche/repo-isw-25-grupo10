@@ -3,7 +3,6 @@ from typing import List
 from back.src.modelos.inscripcion import Inscripcion
 
 
-
 class RepositorioEnMemoria:
     """Mock de repositorio que guarda las inscripciones en una lista."""
 

@@ -7,8 +7,10 @@ import os
 from back.src.excepciones import ErrorEnvioCorreo
 from back.src.modelos.inscripcion import Inscripcion
 
+
 class ServicioCorreo:
     """Clase responsable de enviar comprobante usando SMTP"""
+
     SMTP_SERVER = "smtp.gmail.com"
     SMTP_PORT = 587
 
@@ -18,26 +20,36 @@ class ServicioCorreo:
 
         # ... (ServicioCorreo class code before generar_html_comprobante) ...
 
-    def generar_html_comprobante(self, inscripcion, email_contacto, id_inscripcion=None):
+    def generar_html_comprobante(
+        self, inscripcion, email_contacto, id_inscripcion=None
+    ):
         """
         Genera el cuerpo HTML del comprobante con estilo visual usando la paleta verde.
         """
         # --- CORRECCIÓN CLAVE: Usar inscripcion.turno.atributo ---
-        participantes_html = "".join([
-            f"<li>{v.nombre} (DNI: {v.dni}, Edad: {v.edad}{' - Talle ' + v.talle if v.talle else ''})</li>"
-            for v in inscripcion.visitantes
-            # NOTA: Usar 'visitantes' si es el nombre correcto del atributo en Inscripcion
-        ])
+        participantes_html = "".join(
+            [
+                f"<li>{v.nombre} (DNI: {v.dni}, Edad: {v.edad}{' - Talle ' + v.talle if v.talle else ''})</li>"
+                for v in inscripcion.visitantes
+                # NOTA: Usar 'visitantes' si es el nombre correcto del atributo en Inscripcion
+            ]
+        )
 
         # Acceso a los atributos de Turno:
-        actividad_nombre = inscripcion.turno.actividad_nombre  # Accede al nombre de la actividad
-        fecha_str = inscripcion.turno.fecha.strftime('%d/%m/%Y')  # Formato de fecha
-        hora_str = inscripcion.turno.hora.strftime('%H:%M')  # Formato de hora
+        actividad_nombre = (
+            inscripcion.turno.actividad_nombre
+        )  # Accede al nombre de la actividad
+        fecha_str = inscripcion.turno.fecha.strftime("%d/%m/%Y")  # Formato de fecha
+        hora_str = inscripcion.turno.hora.strftime("%H:%M")  # Formato de hora
 
         # Se requiere acceso al DNI y Talle de los visitantes
         # Se requiere acceso a la lista de visitantes
 
-        id_html = f"<tr><td style=\"padding: 10px;\"><strong>N° Inscripción:</strong></td><td style=\"padding: 10px;\">{id_inscripcion}</td></tr>" if id_inscripcion is not None else ""
+        id_html = (
+            f'<tr><td style="padding: 10px;"><strong>N° Inscripción:</strong></td><td style="padding: 10px;">{id_inscripcion}</td></tr>'
+            if id_inscripcion is not None
+            else ""
+        )
 
         return f"""
         <html>
@@ -103,25 +115,41 @@ class ServicioCorreo:
         try:
             mensaje = MIMEMultipart("related")
             if id_inscripcion is not None:
-                mensaje["Subject"] = f"Comprobante de inscripción #{id_inscripcion} - {inscripcion.turno.actividad_nombre}"
+                mensaje["Subject"] = (
+                    f"Comprobante de inscripción #{id_inscripcion} - {inscripcion.turno.actividad_nombre}"
+                )
             else:
-                mensaje["Subject"] = f"Comprobante de inscripción - {inscripcion.turno.actividad_nombre}"
+                mensaje["Subject"] = (
+                    f"Comprobante de inscripción - {inscripcion.turno.actividad_nombre}"
+                )
             mensaje["From"] = self.remitente
             mensaje["To"] = email_contacto
 
             # Cuerpo HTML del correo
-            html = self.generar_html_comprobante(inscripcion, email_contacto, id_inscripcion)
+            html = self.generar_html_comprobante(
+                inscripcion, email_contacto, id_inscripcion
+            )
             mensaje.attach(MIMEText(html, "html"))
 
             directorio_src = os.path.dirname(os.path.abspath(__file__))
             RUTA_COMPLETA_LOGO = os.path.abspath(
-                os.path.join(directorio_src, '..', '..', 'front', 'ecoharmony-ui', 'public', 'logo.png')
+                os.path.join(
+                    directorio_src,
+                    "..",
+                    "..",
+                    "front",
+                    "ecoharmony-ui",
+                    "public",
+                    "logo.png",
+                )
             )
 
             if os.path.exists(RUTA_COMPLETA_LOGO):
                 with open(RUTA_COMPLETA_LOGO, "rb") as f:
                     img = MIMEImage(f.read())
-                    img.add_header("Content-ID", "<logo>")  # debe coincidir con el cid usado en el HTML
+                    img.add_header(
+                        "Content-ID", "<logo>"
+                    )  # debe coincidir con el cid usado en el HTML
                     img.add_header("Content-Disposition", "inline", filename="logo.png")
                     mensaje.attach(img)
             else:

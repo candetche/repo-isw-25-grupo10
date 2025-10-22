@@ -1,5 +1,6 @@
 from back.src.repositorios.base import RepositorioBase
 
+
 class InscripcionRepo(RepositorioBase):
     def guardar(self, inscripcion):
         """Guarda una inscripción completa en la base de datos."""
@@ -36,7 +37,9 @@ class InscripcionRepo(RepositorioBase):
             conn.close()
 
     def obtener_por_turno(self, turno_id):
-        return self.ejecutar("SELECT * FROM Inscripcion WHERE turno_id = ?", (turno_id,), fetchall=True)
+        return self.ejecutar(
+            "SELECT * FROM Inscripcion WHERE turno_id = ?", (turno_id,), fetchall=True
+        )
 
     def obtener_todas(self):
         return self.ejecutar("SELECT * FROM Inscripcion", fetchall=True)

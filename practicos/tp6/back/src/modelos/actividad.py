@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 # Clase definida pero sin funciones implementadas
 @dataclass
 class Actividad:

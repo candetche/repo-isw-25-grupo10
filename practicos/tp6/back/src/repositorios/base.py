@@ -3,16 +3,17 @@ from typing import List
 from pathlib import Path
 
 # --- RUTA DINÁMICA ---
-DIRECTORIO_SCRIPT = Path(__file__).resolve().parent 
+DIRECTORIO_SCRIPT = Path(__file__).resolve().parent
 DB_PATH = DIRECTORIO_SCRIPT.parent.parent / "db" / "bd_ecopark.db"
+
 
 class RepositorioBase:
     def __init__(self):
         self.db_path = DB_PATH
-    
+
     def get_connection(self):
         return sqlite3.connect(self.db_path)
-    
+
     def ejecutar(self, query, params=(), fetchone=False, fetchall=False, commit=False):
         conn = self.get_connection()
         cur = conn.cursor()
@@ -34,6 +35,8 @@ class RepositorioBase:
 
 # Repositorio en memoria para pruebas
 from back.src.modelos.inscripcion import Inscripcion
+
+
 class RepositorioEnMemoria(RepositorioBase):
     """Mock de repositorio que guarda las inscripciones en una lista."""
 
