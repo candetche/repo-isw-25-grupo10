@@ -17,6 +17,7 @@ from back.src.excepciones import (
     ErrorRestriccionEdad, ErrorParqueCerrado, ErrorChoqueHorario,
     ErrorAnticipacion, ErrorEmailInvalido, ErrorFechaPasada
 )
+from back.src.servicio_correo import ServicioCorreo
 
 
 app = FastAPI(title="EcoHarmony Park API")
@@ -111,10 +112,15 @@ def inscribirse(payload: InscripcionIn):
         }
 
         # 4️⃣ Servicio principal
+        # --- Inicializar servicio de correo ---
+        servicio_correo = ServicioCorreo(
+            remitente="manupereiraduarte@gmail.com",
+            password_app="zjwh fgmg qyuq vtyv"  # 👈 la clave de aplicación de Gmail
+        )
         # obtener inscripciones previas desde la BD
         inscripciones_previas = repo_insc.obtener_todas() if hasattr(repo_insc, "obtener_todas") else []
         repo_insc.inscripciones = inscripciones_previas  # el servicio las usará internamente
-        servicio = ServicioInscripcion(setup_actividades, [turno], repo_insc)
+        servicio = ServicioInscripcion(setup_actividades, [turno], repo_insc, servicio_correo = servicio_correo)
         inscripcion = servicio.inscribir(
             turno=turno,
             participantes=participantes,

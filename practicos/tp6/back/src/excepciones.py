@@ -31,3 +31,6 @@ class ErrorEmailInvalido(ValidacionError):
 class ErrorFechaPasada(ValidacionError):
     """La fecha del turno ya pasó."""
     pass
+class ErrorEnvioCorreo(ValidacionError):
+    """Error al enviar el correo electrónico."""
+    pass

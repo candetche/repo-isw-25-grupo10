@@ -16,6 +16,7 @@ from back.src.excepciones import (
     ErrorAnticipacion,
     ErrorEmailInvalido,
     ErrorFechaPasada,
+    ErrorEnvioCorreo
 )
 from back.src.repositorios.base import RepositorioEnMemoria
 
@@ -23,13 +24,14 @@ from back.src.repositorios.base import RepositorioEnMemoria
 class ServicioInscripcion:
     """Servicio de la lógica de negocio para gestionar inscripciones."""
 
-    def __init__(self, setup_actividades: Dict, turnos_disponibles: List[Turno], repo: RepositorioEnMemoria, fecha_actual: Optional[date] = None):
+    def __init__(self, setup_actividades: Dict, turnos_disponibles: List[Turno], repo: RepositorioEnMemoria, fecha_actual: Optional[date] = None, servicio_correo=None):
         self.setup_actividades = setup_actividades
         self.turnos_disponibles = {t.id: t for t in turnos_disponibles}
         self.repo = repo
         self.horario_cierre = time(18, 0)
         self.horario_apertura = time(9, 0)
         self.fecha_actual = fecha_actual or date.today()
+        self.servicio_correo = servicio_correo
 
     def _validar_email(self, email: str) -> bool:
         if not isinstance(email, str):
@@ -182,5 +184,14 @@ class ServicioInscripcion:
         if turno.id in self.turnos_disponibles:
             self.turnos_disponibles[turno.id].cupo_ocupado = getattr(turno, "cupo_ocupado", cupo_ocupado_actual + num_nuevos)
 
-        # El servicio no persiste: devuelve la inscripción para que la capa de aplicación la guarde una sola vez
+        # 11) ENVÍO DEL COMPROBANTE DE INSCRIPCIÓN
+        try:
+            # Llamamos al servicio inyectado para enviar el comprobante
+            self.servicio_correo.enviar_comprobante(nueva_inscripcion, email_contacto)
+        except ErrorEnvioCorreo as e:
+            # Si el mail falla, generalmente NO se revierte la inscripción,
+            print(f"Advertencia: Falló el envío del comprobante al correo {email_contacto}. Error: {e}")
+        except Exception as e:
+            print(f"Error inesperado durante el envío de correo: {e}")
+
         return nueva_inscripcion
