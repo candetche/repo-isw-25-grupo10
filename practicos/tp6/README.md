@@ -14,11 +14,14 @@ Este paso es **obligatorio y local** para que el IDE (PyCharm, VS Code) resuelva
 
 ---
 
-## 2. Dependencias Requeridas
+## 2. Dependencias Requeridas 
 
 | Paquete | Instalación | Propósito |
 | :--- | :--- | :--- |
-| **`pytest`** | `pip install pytest` | Marco de trabajo para la ejecución de tests unitarios. |
+| **`pytest`** | `pip install pytest` | Marco de trabajo para la ejecución de tests unitarios. | 
+
+Versiones de python > 3.9 para evitar fallas relacionadas a nomenclaturas
+
 
 ---
 
