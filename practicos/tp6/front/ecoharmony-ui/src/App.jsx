@@ -420,9 +420,9 @@ export default function App() {
         <img src="/logo.PNG" alt="EcoHarmony Park" />
         <div>
           <h1 className="h1">Inscripción a Actividad</h1>
-          <p className="sub">EcoHarmony Park — prototipo front-only</p>
+          <p className="sub">EcoHarmony Park</p>
         </div>
-        <span className="badge">Alpha • Solo vista previa</span>
+        
       </div>
 
       <div className="card">
