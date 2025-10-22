@@ -760,6 +760,9 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
     if (field === "dni") {
       nextVal = String(value || "").replace(/\D/g, "");
     }
+    if (field === "edad") {
+      nextVal = String(value || "").replace(/\D/g, "");
+    }
     copy[i] = { ...copy[i], [field]: nextVal };
     setParticipantes(copy);
     if (field === "dni") {
@@ -882,9 +885,9 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
               </td>
               <td>
                 <input
-                  type="number"
-                  min="1"
-                  max="150"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   value={p.edad}
                   onChange={(e) => update(i, "edad", e.target.value)}
                   placeholder="Edad"
