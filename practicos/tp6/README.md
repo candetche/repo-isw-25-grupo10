@@ -54,7 +54,9 @@ Abre una terminal en la carpeta raíz del proyecto:
 C:\Users\roffe\OneDrive\Desktop\4to\ISW\repo\repo-isw-25-grupo10\practicos\tp6
 
 
-Ejecuta el siguiente comando:
+Ejecuta los siguientes comandos:
+
+pip install fastapi uvicorn
 
 python -m uvicorn back.app:app --reload
 
@@ -69,6 +71,11 @@ Puedes verificar la documentación interactiva de la API en:
 Swagger UI: http://127.0.0.1:8000/docs
 
 Redoc: http://127.0.0.1:8000/redoc
+
+De no funcionar, ejecuta los siguientes comandos:
+pip install fastapi uvicorn
+python -m back.app
+uvicorn back.app:app --reload --host 0.0.0.0 --port 8000  
 
 # 🌐 Frontend (React + Vite)
 
