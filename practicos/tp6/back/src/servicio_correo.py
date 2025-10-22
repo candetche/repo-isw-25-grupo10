@@ -18,7 +18,7 @@ class ServicioCorreo:
 
         # ... (ServicioCorreo class code before generar_html_comprobante) ...
 
-    def generar_html_comprobante(self, inscripcion, email_contacto):
+    def generar_html_comprobante(self, inscripcion, email_contacto, id_inscripcion=None):
         """
         Genera el cuerpo HTML del comprobante con estilo visual usando la paleta verde.
         """
@@ -36,6 +36,8 @@ class ServicioCorreo:
 
         # Se requiere acceso al DNI y Talle de los visitantes
         # Se requiere acceso a la lista de visitantes
+
+        id_html = f"<tr><td style=\"padding: 10px;\"><strong>N° Inscripción:</strong></td><td style=\"padding: 10px;\">{id_inscripcion}</td></tr>" if id_inscripcion is not None else ""
 
         return f"""
         <html>
@@ -55,6 +57,7 @@ class ServicioCorreo:
                     </p>
 
                     <table style="width: 100%; border-collapse: collapse; background-color: #E8FCCF; color: #134611; border-radius: 8px; margin-top: 15px;">
+                        {id_html}
                         <tr>
                             <td style="padding: 10px;"><strong>Actividad:</strong></td>
                             <td style="padding: 10px;">{actividad_nombre}</td>
@@ -93,18 +96,21 @@ class ServicioCorreo:
         </html>
         """
 
-    def enviar_comprobante(self, inscripcion, email_contacto):
+    def enviar_comprobante(self, inscripcion, email_contacto, id_inscripcion=None):
         """
         Envía el comprobante al correo del usuario con formato HTML y logo embebido.
         """
         try:
             mensaje = MIMEMultipart("related")
-            mensaje["Subject"] = f"Comprobante de inscripción - {inscripcion.turno.actividad_nombre}"
+            if id_inscripcion is not None:
+                mensaje["Subject"] = f"Comprobante de inscripción #{id_inscripcion} - {inscripcion.turno.actividad_nombre}"
+            else:
+                mensaje["Subject"] = f"Comprobante de inscripción - {inscripcion.turno.actividad_nombre}"
             mensaje["From"] = self.remitente
             mensaje["To"] = email_contacto
 
             # Cuerpo HTML del correo
-            html = self.generar_html_comprobante(inscripcion, email_contacto)
+            html = self.generar_html_comprobante(inscripcion, email_contacto, id_inscripcion)
             mensaje.attach(MIMEText(html, "html"))
 
             directorio_src = os.path.dirname(os.path.abspath(__file__))

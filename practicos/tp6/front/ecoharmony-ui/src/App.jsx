@@ -2,27 +2,20 @@
 import React, { useMemo, useState } from "react";
 
 async function apiInscribirse(data) {
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/inscribirse", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (!res.ok) {
+  const res = await fetch("http://127.0.0.1:8000/api/inscribirse", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    let detail = "No se pudo procesar la inscripción.";
+    try {
       const err = await res.json();
-      console.error("Error backend:", err);
-      alert("Error: " + (err.detail || "No se pudo procesar la inscripción."));
-      return null;
-    }
-
-    const json = await res.json();
-    return json;
-  } catch (e) {
-    console.error("Fallo de red:", e);
-    alert("No se pudo conectar con el servidor.");
-    return null;
+      detail = err.detail || detail;
+    } catch {}
+    throw new Error(detail);
   }
+  return res.json();
 }
 
 async function apiGetActividades() {
@@ -41,8 +34,8 @@ async function apiGetTurnos(fechaISO) {
 
 
 // Helper simple de email
-const isValidEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s));
-
+const isValidEmail = (s) => /^[^\s@]+@gmail\.com$/i.test(String(s));
+  
 // Mayus la primera letra; respeta el resto del string.
 function capFirst(s) {
   if (!s) return s;
@@ -161,6 +154,18 @@ export default function App() {
   // Éxito
   const [okMsg, setOkMsg] = useState("");
 
+  // Modal de mensajes (reemplaza alert)
+  const [modal, setModal] = useState({ open: false, title: "", content: "" });
+  const openModal = (title, content) => setModal({ open: true, title, content });
+  const [resetOnModalClose, setResetOnModalClose] = useState(false);
+  const closeModal = () => {
+    setModal(m => ({ ...m, open: false }));
+    if (resetOnModalClose) {
+      setResetOnModalClose(false);
+      reset();
+    }
+  };
+
   // Conflictos de DNI detectados en Step 2 (evita avanzar)
   const [dniConflicts, setDniConflicts] = useState(false);
 
@@ -170,9 +175,9 @@ export default function App() {
 
     try {
       const result = await apiInscribirse(payload);
-      alert(result.mensaje);
+      openModal("Inscripción", result.mensaje || "Inscripción procesada.");
     } catch (e) {
-      alert(e.message || "Error al inscribirse.");
+      openModal("Error", e.message || "Error al inscribirse.");
     } finally {
       setIsSubmitting(false);
     }
@@ -193,7 +198,7 @@ export default function App() {
         console.log("Turnos cargados:", t);
       } catch (e) {
         console.error("Error cargando datos iniciales:", e);
-        alert("No se pudieron obtener los datos del servidor.");
+        openModal("Error", "No se pudieron obtener los datos del servidor.");
       } finally {
         setLoading(false);
       }
@@ -283,7 +288,7 @@ export default function App() {
 
     if (step === 2) {
       if (dniConflicts) {
-        alert("Hay participantes con DNI ya inscriptos en ese horario. Revisá los avisos en la tabla.");
+        openModal("Conflictos de DNI", "Hay participantes con DNI ya inscriptos en ese horario. Revisá los avisos en la tabla.");
         return;
       }
       const errs = [];
@@ -298,7 +303,7 @@ export default function App() {
       const edadNum = Number(p.edad); // <-- nombre distinto para evitar redeclaración
 
       const actividadSel = actividades.find(a => a.nombre === actividad);
-      const edadMinima = actividadSel ? actividadSel.edad_min : 0;
+      const edadMinima = actividadSel ? Number(actividadSel.edad_min ?? 0) : 0;
       const requiereTalle = actividadSel ? actividadSel.requiere_talle : false;
 
       // Reglas existentes
@@ -311,9 +316,9 @@ export default function App() {
       }
       if (!/^\d{6,10}$/.test(dniNorm))
         errs.push(`Fila ${idx + 1}: DNI debe tener 6 a 10 dígitos`);
-      if (!Number.isFinite(edadNum) || edadNum < 0)
+      if (!Number.isFinite(edadNum) || edadNum <= 0 || edadNum > 150)
         errs.push(`Fila ${idx + 1}: edad inválida`);
-      if (edadNum < edadMinima)
+      if (edadNum > 0 && Number.isFinite(edadMinima) && edadMinima > 0 && edadNum < edadMinima)
         errs.push(`Fila ${idx + 1}: edad mínima para ${actividad} es ${edadMinima}`);
       if (requiereTalle && !p.talle)
         errs.push(`Fila ${idx + 1}: talle es obligatorio en ${actividad}`);
@@ -334,7 +339,7 @@ export default function App() {
 
     if (errs.length) {
       setStep2Errors(errs);
-      alert("Corrige:\n- " + errs.join("\n- "));
+      openModal("Revisá los datos", "- " + errs.join("\n- "));
       return;
     }
     setStep2Errors([]);
@@ -350,11 +355,11 @@ export default function App() {
 
     if (step === 3) {
         if (!isValidEmail(email)) {
-            alert("Ingresá un email válido para la confirmación.");
+            openModal("Email inválido", "Ingresá un email válido de Gmail.");
             return;
         }
         if (!aceptaTC) {
-            alert("Debes aceptar Términos y Condiciones.");
+            openModal("Términos y Condiciones", "Debes aceptar Términos y Condiciones.");
             return;
         }
 
@@ -373,14 +378,19 @@ export default function App() {
         };
         console.log("Payload enviado al backend:", payload);
 
-
-        const result = await apiInscribirse(payload);
-
-        if (result) {
-            // 💡 CAMBIO: Aplicar toDDMMYYYY al mensaje de éxito en App (opcional, pero mejorado)
-            setOkMsg(
-              `¡Inscripción confirmada! ${participantes.length} lugar(es) reservado(s) para ${actividad} el ${toDDMMYYYY(fechaISO)} a las ${hora}.`
+        try {
+          const result = await apiInscribirse(payload);
+          if (result) {
+            const id = result.id_inscripcion;
+            const idTxt = id ? `\nN° de inscripción: ${id}` : "";
+            setResetOnModalClose(true);
+            openModal(
+              "Inscripción",
+              `¡Inscripción confirmada! ${participantes.length} lugar(es) reservado(s) para ${actividad} el ${toDDMMYYYY(fechaISO)} a las ${hora}.${idTxt}`
             );
+          }
+        } catch (e) {
+          openModal("Error", e.message || "No se pudo procesar la inscripción.");
         }
     }
 
@@ -516,18 +526,32 @@ export default function App() {
         </div>
       </div>
 
-      {okMsg && (
-        <div style={{ marginTop: 16 }} className="success">
-          {okMsg}{" "}
-          <button
-            className="btn secondary"
-            style={{ marginLeft: 10 }}
-            onClick={reset}
-          >
-            Nueva inscripción
-          </button>
-        </div>
+      
+
+      {modal.open && (
+        <Modal onClose={closeModal} title={modal.title}>
+          <div style={{ whiteSpace: 'pre-wrap' }}>{modal.content}</div>
+        </Modal>
       )}
+    </div>
+  );
+}
+
+/** ====== Modal genérico para mensajes ====== */
+function Modal({ title, children, onClose }) {
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
+        <header>
+          <b>{title || "Mensaje"}</b>
+        </header>
+        <main>
+          {children}
+        </main>
+        <footer>
+          <button className="btn secondary" onClick={onClose}>Cerrar</button>
+        </footer>
+      </div>
     </div>
   );
 }
@@ -732,15 +756,28 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
 
   function update(i, field, value) {
     const copy = [...participantes];
-    copy[i] = { ...copy[i], [field]: value };
+    let nextVal = value;
+    if (field === "dni") {
+      nextVal = String(value || "").replace(/\D/g, "");
+    }
+    copy[i] = { ...copy[i], [field]: nextVal };
     setParticipantes(copy);
     if (field === "dni") {
-      // limpiar warning de esa fila hasta revalidar
-      setDniWarns(prev => {
-        const next = { ...prev, [i]: "" };
-        const has = Object.values(next).some(Boolean);
-        setDniConflicts(has);
-        return next;
+      const dniNum = String(nextVal || "");
+      const formatMsg = dniNum && !/^\d{6,10}$/.test(dniNum)
+        ? "El DNI debe tener entre 6 y 10 dígitos."
+        : (!dniNum ? "El DNI es obligatorio." : "");
+
+      setDniFormatWarns(prev => {
+        const nextFmt = { ...prev, [i]: formatMsg };
+        setDniWarns(prevWarn => {
+          const nextWarn = { ...prevWarn, [i]: prevWarn[i] && formatMsg ? "" : prevWarn[i] };
+          const hasConflict = Object.values(nextWarn).some(Boolean);
+          const hasFormat = Object.values(nextFmt).some(Boolean);
+          setTimeout(() => setDniConflicts(hasConflict || hasFormat), 0);
+          return nextWarn;
+        });
+        return nextFmt;
       });
     }
     if (field === "nombre") {
@@ -748,27 +785,36 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
       const soloLetrasYEspacios = /^[\p{L}\s]+$/u.test(v);
       setNameWarns(prev => ({ ...prev, [i]: v && !soloLetrasYEspacios ? "El nombre solo puede contener letras y espacios." : "" }));
     }
+    if (field === "edad") {
+      const n = Number(nextVal);
+      let msg = "";
+      if (!Number.isFinite(n) || n <= 0) msg = "La edad debe ser mayor a 0.";
+      else if (n > 150) msg = "La edad no puede ser mayor a 150.";
+      setAgeWarns(prev => ({ ...prev, [i]: msg }));
+    }
   }
 
-  const [dniWarns, setDniWarns] = React.useState({}); // {index: message}
+  const [dniWarns, setDniWarns] = React.useState({}); // {index: message} conflictos (DNI ya inscripto)
+  const [dniFormatWarns, setDniFormatWarns] = React.useState({}); // {index: message} formato inválido
   const [nameWarns, setNameWarns] = React.useState({}); // {index: message}
+  const [ageWarns, setAgeWarns] = React.useState({});
 
   async function validarDNIHorario(i, dniValor) {
     try {
       const dniNum = String(dniValor || "").replace(/\D/g, "");
-      if (!dniNum || !fechaISO || !hora) return; // necesita fecha y hora elegidas
+      if (!dniNum || !/^\d{6,10}$/.test(dniNum) || !fechaISO || !hora) return;
       const url = `http://127.0.0.1:8000/api/validar-dni?dni=${dniNum}&fecha=${encodeURIComponent(fechaISO)}&hora=${encodeURIComponent(hora)}`;
       const res = await fetch(url);
       if (!res.ok) return;
       const json = await res.json();
       setDniWarns(prev => {
-        const next = { ...prev, [i]: json.existe ? "Este DNI ya está inscripto en ese horario." : "" };
-        const has = Object.values(next).some(Boolean);
-        setDniConflicts(has);
-        return next;
+        const nextWarn = { ...prev, [i]: json.existe ? "Este DNI ya está inscripto en ese horario." : "" };
+        const hasConflict = Object.values(nextWarn).some(Boolean);
+        const hasFormat = Object.values(dniFormatWarns).some(Boolean);
+        setTimeout(() => setDniConflicts(hasConflict || hasFormat), 0);
+        return nextWarn;
       });
     } catch {
-      // silencio: no bloquear la UI por un fallo de red momentáneo
     }
   }
 
@@ -776,6 +822,15 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
 
   return (
     <>
+      <div className="field">
+        <label>Actividad y Horario</label>
+        <div className="card" style={{ padding: "12px", borderRadius: "12px" }}>
+          <b>{capFirst(actividad)}</b> — {toDDMMYYYY(fechaISO)} a las {hora}
+          <br />
+          {participantes.length} participante(s) a inscribir.
+        </div>
+      </div>
+
       <div className="field">
         <label>Participantes</label>
         <div className="helper">
@@ -815,7 +870,12 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
                   onChange={(e) => update(i, "dni", e.target.value)}
                   onBlur={(e) => validarDNIHorario(i, e.target.value)}
                   placeholder="Solo números"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                 />
+                {!!dniFormatWarns[i] && (
+                  <div className="err" style={{ marginTop: 4 }}>{dniFormatWarns[i]}</div>
+                )}
                 {!!dniWarns[i] && (
                   <div className="err" style={{ marginTop: 4 }}>{dniWarns[i]}</div>
                 )}
@@ -823,11 +883,15 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
               <td>
                 <input
                   type="number"
-                  min="0"
+                  min="1"
+                  max="150"
                   value={p.edad}
                   onChange={(e) => update(i, "edad", e.target.value)}
                   placeholder="Edad"
                 />
+                {!!ageWarns[i] && (
+                  <div className="err" style={{ marginTop: 4 }}>{ageWarns[i]}</div>
+                )}
               </td>
               {requiereTalle && (
                 <td>
@@ -883,6 +947,32 @@ function Step3({
       </div>
 
       <div className="field">
+        <label>Participantes</label>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>DNI</th>
+              <th>Edad</th>
+              <th>Talle</th>
+            </tr>
+          </thead>
+          <tbody>
+            {participantes.map((p, i) => (
+              <tr key={i}>
+                <td>{i + 1}</td>
+                <td>{p.nombre}</td>
+                <td>{p.dni}</td>
+                <td>{p.edad}</td>
+                <td>{p.talle || "-"}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="field">
         <label>Términos y Condiciones</label>
         <div className="row">
           <button
@@ -911,6 +1001,9 @@ function Step3({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {!!email && !isValidEmail(email) && (
+          <div className="err" style={{ marginTop: 4 }}>El email debe ser una cuenta de Gmail terminada en @gmail.com</div>
+        )}
         <p className="helper">
           Usaremos este correo para enviarte el comprobante y la confirmación de
           la inscripción.
