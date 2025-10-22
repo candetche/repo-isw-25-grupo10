@@ -127,8 +127,6 @@ export default function App() {
 
   const [step2Errors, setStep2Errors] = useState([]);
 
-
-
   const [step, setStep] = useState(1);
   const [regs, setRegs] = useState(PRESEED);
 
@@ -136,8 +134,27 @@ export default function App() {
   const [turnos, setTurnos] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Step 1
+  const [actividad, setActividad] = useState("");
+  const [fechaISO, setFechaISO] = useState("");
+  const [hora, setHora] = useState("");
+  const [cantidad, setCantidad] = useState(1);
+
+  // Step 2
+  const [participantes, setParticipantes] = useState([]);
+
+  // Step 3
+  const [showTC, setShowTC] = useState(false);
+  const [aceptaTC, setAceptaTC] = useState(false);
+  const [email, setEmail] = useState("");
+
+  // Éxito
+  const [okMsg, setOkMsg] = useState("");
+
+  // Conflictos de DNI detectados en Step 2 (evita avanzar)
+  const [dniConflicts, setDniConflicts] = useState(false);
 
   async function handleSubmit() {
     if (isSubmitting) return; // evita doble envío
@@ -177,23 +194,21 @@ export default function App() {
     fetchData();
   }, []);
 
+  // Actualizar turnos cuando cambia la fecha seleccionada
+  React.useEffect(() => {
+    async function fetchTurnosFecha() {
+      try {
+        if (!fechaISO) return;
+        const t = await apiGetTurnos(fechaISO);
+        setTurnos(t);
+        console.log("Turnos cargados para fecha", fechaISO, t);
+      } catch (e) {
+        console.error("Error obteniendo turnos para fecha", fechaISO, e);
+      }
+    }
+    fetchTurnosFecha();
+  }, [fechaISO]);
 
-  // Step 1
-  const [actividad, setActividad] = useState("");
-  const [fechaISO, setFechaISO] = useState("");
-  const [hora, setHora] = useState("");
-  const [cantidad, setCantidad] = useState(1);
-
-  // Step 2
-  const [participantes, setParticipantes] = useState([]);
-
-  // Step 3
-  const [showTC, setShowTC] = useState(false);
-  const [aceptaTC, setAceptaTC] = useState(false);
-  const [email, setEmail] = useState("");
-
-  // Éxito
-  const [okMsg, setOkMsg] = useState("");
 
   // Derivados
   const actividadSeleccionada = actividades.find(a => a.nombre === actividad);
@@ -202,10 +217,31 @@ export default function App() {
     () => countOcupados(regs, actividad, fechaISO, hora),
     [regs, actividad, fechaISO, hora]
   );
-  const cuposRestantes =
-    actividad && fechaISO && hora
-      ? Math.max(0, cuposTotales - ocupados)
-      : 0;
+  // Preferimos el dato del backend por turno específico; si no existe, caemos al cálculo local
+  const turnoSeleccionado = useMemo(() => {
+    if (!actividad || !fechaISO || !hora) return null;
+    const actSel = actividades.find(a => a.nombre === actividad);
+    if (!actSel) return null;
+    const fechaSel = String(fechaISO).trim();
+    return turnos.find(t =>
+      Number(t.actividad_id) === Number(actSel.id) &&
+      String(t.fecha).split("T")[0].trim() === fechaSel &&
+      String(t.hora).trim() === String(hora).trim()
+    ) || null;
+  }, [actividad, fechaISO, hora, actividades, turnos]);
+
+  const cuposRestantes = useMemo(() => {
+    if (turnoSeleccionado) {
+      const fromBackend = Number(
+        (turnoSeleccionado.cupos_disponibles ?? turnoSeleccionado.cupo_disponible ?? 0)
+      );
+      return Math.max(0, fromBackend);
+    }
+    if (actividad && fechaISO && hora) {
+      return Math.max(0, cuposTotales - ocupados);
+    }
+    return 0;
+  }, [turnoSeleccionado, actividad, fechaISO, hora, cuposTotales, ocupados]);
 
   const puedeAvanzarStep1 =
     actividad && fechaISO && hora && !fechaErr && cantidad > 0 && cantidad <= cuposRestantes;
@@ -238,6 +274,10 @@ export default function App() {
     }
 
     if (step === 2) {
+      if (dniConflicts) {
+        alert("Hay participantes con DNI ya inscriptos en ese horario. Revisá los avisos en la tabla.");
+        return;
+      }
       const errs = [];
 
   // Anti-duplicados dentro de la misma inscripción
@@ -255,6 +295,12 @@ export default function App() {
 
       // Reglas existentes
       if (!nombreOk) errs.push(`Fila ${idx + 1}: nombre es requerido`);
+      if (p.nombre) {
+        const nombreStr = String(p.nombre);
+        const soloLetrasYEspacios = /^[\p{L}\s]+$/u.test(nombreStr);
+        if (!soloLetrasYEspacios)
+          errs.push(`Fila ${idx + 1}: el nombre solo puede contener letras y espacios`);
+      }
       if (!/^\d{6,10}$/.test(dniNorm))
         errs.push(`Fila ${idx + 1}: DNI debe tener 6 a 10 dígitos`);
       if (!Number.isFinite(edadNum) || edadNum < 0)
@@ -398,10 +444,13 @@ export default function App() {
         {step === 2 && (
           <Step2
             actividad={actividad}
+            fechaISO={fechaISO}
+            hora={hora}
             participantes={participantes}
             setParticipantes={setParticipantes}
             errors={step2Errors}
             actividades={actividades}
+            setDniConflicts={setDniConflicts}
 
           />
         )}
@@ -430,7 +479,7 @@ export default function App() {
           {step < 3 && (
             <button
               className="btn"
-              disabled={step === 1 && !puedeAvanzarStep1}
+              disabled={(step === 1 && !puedeAvanzarStep1) || (step === 2 && dniConflicts)}
               onClick={goNext}
             >
               Siguiente
@@ -530,7 +579,7 @@ function Step1({
   function onCantidadChange(e) {
     const v = Number(e.target.value);
     setCantidad(v);
-    if (cuposRestantes && v > cuposRestantes)
+    if (v > cuposRestantes)
       setErr(`Solo quedan ${cuposRestantes} cupos para ese horario`);
     else setErr("");
   }
@@ -664,7 +713,7 @@ function Step1({
 }
 
 /** ====== Step 2: Participantes ====== */
-function Step2({ actividad, participantes, setParticipantes, actividades }) {
+function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, actividades, setDniConflicts }) {
   // Buscar si la actividad seleccionada requiere talle
   const actSel = actividades.find(a => a.nombre === actividad);
   const requiereTalle = actSel ? actSel.requiere_talle : false;
@@ -673,6 +722,42 @@ function Step2({ actividad, participantes, setParticipantes, actividades }) {
     const copy = [...participantes];
     copy[i] = { ...copy[i], [field]: value };
     setParticipantes(copy);
+    if (field === "dni") {
+      // limpiar warning de esa fila hasta revalidar
+      setDniWarns(prev => {
+        const next = { ...prev, [i]: "" };
+        const has = Object.values(next).some(Boolean);
+        setDniConflicts(has);
+        return next;
+      });
+    }
+    if (field === "nombre") {
+      const v = String(value || "");
+      const soloLetrasYEspacios = /^[\p{L}\s]+$/u.test(v);
+      setNameWarns(prev => ({ ...prev, [i]: v && !soloLetrasYEspacios ? "El nombre solo puede contener letras y espacios." : "" }));
+    }
+  }
+
+  const [dniWarns, setDniWarns] = React.useState({}); // {index: message}
+  const [nameWarns, setNameWarns] = React.useState({}); // {index: message}
+
+  async function validarDNIHorario(i, dniValor) {
+    try {
+      const dniNum = String(dniValor || "").replace(/\D/g, "");
+      if (!dniNum || !fechaISO || !hora) return; // necesita fecha y hora elegidas
+      const url = `http://127.0.0.1:8000/api/validar-dni?dni=${dniNum}&fecha=${encodeURIComponent(fechaISO)}&hora=${encodeURIComponent(hora)}`;
+      const res = await fetch(url);
+      if (!res.ok) return;
+      const json = await res.json();
+      setDniWarns(prev => {
+        const next = { ...prev, [i]: json.existe ? "Este DNI ya está inscripto en ese horario." : "" };
+        const has = Object.values(next).some(Boolean);
+        setDniConflicts(has);
+        return next;
+      });
+    } catch {
+      // silencio: no bloquear la UI por un fallo de red momentáneo
+    }
   }
 
   const TALLES = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -708,13 +793,20 @@ function Step2({ actividad, participantes, setParticipantes, actividades }) {
                   onChange={(e) => update(i, "nombre", e.target.value)}
                   placeholder="Nombre y apellido"
                 />
+                {!!nameWarns[i] && (
+                  <div className="err" style={{ marginTop: 4 }}>{nameWarns[i]}</div>
+                )}
               </td>
               <td>
                 <input
                   value={p.dni}
                   onChange={(e) => update(i, "dni", e.target.value)}
+                  onBlur={(e) => validarDNIHorario(i, e.target.value)}
                   placeholder="Solo números"
                 />
+                {!!dniWarns[i] && (
+                  <div className="err" style={{ marginTop: 4 }}>{dniWarns[i]}</div>
+                )}
               </td>
               <td>
                 <input

@@ -8,23 +8,32 @@ class InscripcionRepo(RepositorioBase):
         acepta_terminos = inscripcion.acepta_terminos
         total_personas = inscripcion.total_personas
 
-        # Insertar la inscripción
-        self.ejecutar("""
-            INSERT INTO Inscripcion (turno_id, email_contacto, total_personas, acepta_terminos)
-            VALUES (?, ?, ?, ?)
-        """, (turno_id, email_contacto, total_personas, int(acepta_terminos)), commit=True)
-
-        # Obtener el ID recién insertado
-        inscripcion_id = self.ejecutar("SELECT last_insert_rowid()", fetchone=True)[0]
-
-        # Insertar visitantes asociados
-        for v in inscripcion.visitantes:
-            self.ejecutar("""
-                INSERT INTO Visitante (inscripcion_id, nombre, dni, edad, talle)
-                VALUES (?, ?, ?, ?, ?)
-            """, (inscripcion_id, v.nombre, v.dni, v.edad, v.talle or ""), commit=True)
-
-        return inscripcion_id
+        # Usar una única conexión/transaction para asegurar que lastrowid corresponda
+        conn = self.get_connection()
+        try:
+            cur = conn.cursor()
+            # Insert Inscripcion
+            cur.execute(
+                """
+                INSERT INTO Inscripcion (turno_id, email_contacto, total_personas, acepta_terminos)
+                VALUES (?, ?, ?, ?)
+                """,
+                (turno_id, email_contacto, total_personas, int(acepta_terminos)),
+            )
+            inscripcion_id = cur.lastrowid
+            # Insert Visitantes
+            for v in inscripcion.visitantes:
+                cur.execute(
+                    """
+                    INSERT INTO Visitante (inscripcion_id, nombre, dni, edad, talle)
+                    VALUES (?, ?, ?, ?, ?)
+                    """,
+                    (inscripcion_id, v.nombre, v.dni, v.edad, v.talle or ""),
+                )
+            conn.commit()
+            return inscripcion_id
+        finally:
+            conn.close()
 
     def obtener_por_turno(self, turno_id):
         return self.ejecutar("SELECT * FROM Inscripcion WHERE turno_id = ?", (turno_id,), fetchall=True)

@@ -70,15 +70,36 @@ def inscribirse(payload: InscripcionIn):
             raise HTTPException(status_code=404, detail="Turno no encontrado")
 
         # turno_match = (id, actividad_id, fecha, hora, cupo_disponible)
+        # capacidad máxima de la actividad
+        cap_max = repo_act.obtener_por_id(act[0])[2]
         turno = Turno(
             id=turno_match[0],
             actividad_nombre=payload.actividad,
             fecha=datetime.strptime(payload.fecha, "%Y-%m-%d").date(),
             hora=datetime.strptime(payload.hora, "%H:%M").time(),
-            cupo_ocupado=(repo_act.obtener_por_id(act[0])[2] - turno_match[4])  # capacidad_maxima - cupo_disponible
+            cupo_ocupado=(cap_max - turno_match[4])  # capacidad_maxima - cupo_disponible
         )
 
-        # 2️⃣ Crear visitantes
+        # 2️⃣ Validaciones de participantes
+        # 2.1) Duplicados en el mismo payload
+        dnis = [v.dni for v in payload.participantes]
+        if len(dnis) != len(set(dnis)):
+            raise HTTPException(status_code=400, detail="DNI duplicado en la misma inscripción")
+
+        # 2.2) Choque de horario para cada DNI en cualquier actividad
+        for v in payload.participantes:
+            if repo_visit.existe_choque_por_dni_y_fecha_hora(v.dni, payload.fecha, payload.hora):
+                raise HTTPException(status_code=400, detail=f"El DNI {v.dni} ya tiene una inscripción en ese horario")
+
+        # 2.3) Nombre solo letras y espacios (sin números ni caracteres especiales)
+        for v in payload.participantes:
+            nombre = (v.nombre or "").strip()
+            if not nombre:
+                raise HTTPException(status_code=400, detail="El nombre es requerido")
+            if not all((ch.isalpha() or ch.isspace()) for ch in nombre):
+                raise HTTPException(status_code=400, detail=f"El nombre del participante con DNI {v.dni} solo puede contener letras y espacios")
+
+        # 2.4) Crear modelos de dominio
         participantes = [Visitante(**v.dict()) for v in payload.participantes]
 
         # 3️⃣ Configuración de actividades (deberías moverla a una constante)
@@ -103,11 +124,11 @@ def inscribirse(payload: InscripcionIn):
 
         # 5️⃣ Guardar inscripción y visitantes
         inscripcion_id = repo_insc.guardar(inscripcion)
+        # Actualizar cupo disponible: cap_max - cupo_ocupado_actualizado
+        nuevo_disponible = max(0, cap_max - getattr(turno, "cupo_ocupado", 0))
+        repo_turno.actualizar_cupo(turno.id, nuevo_disponible)
 
-        repo_turno.actualizar_cupo(turno.id, turno.cupo_ocupado)
-
-        for v in payload.participantes:
-            repo_visit.agregar_visitante(inscripcion_id, v.nombre, v.dni, v.edad, v.talle or "")
+        # No insertar nuevamente visitantes aquí: ya se insertaron en InscripcionRepo.guardar()
         return {"ok": True, "mensaje": f"Inscripción confirmada para {payload.actividad} el {payload.fecha} a las {payload.hora}"}
 
     except (
@@ -179,3 +200,14 @@ def listar_turnos(fecha: str | None = None):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al listar turnos: {str(e)}")
+
+
+@app.get("/api/validar-dni")
+def validar_dni(dni: int, fecha: str, hora: str):
+    """Devuelve {existe: true/false} si el DNI ya está inscripto en cualquier actividad en esa fecha y hora."""
+    try:
+        repo_visit = VisitanteRepo()
+        existe = repo_visit.existe_choque_por_dni_y_fecha_hora(dni, fecha, hora)
+        return {"existe": bool(existe)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al validar DNI: {str(e)}")

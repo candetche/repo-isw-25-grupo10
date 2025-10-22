@@ -182,7 +182,5 @@ class ServicioInscripcion:
         if turno.id in self.turnos_disponibles:
             self.turnos_disponibles[turno.id].cupo_ocupado = getattr(turno, "cupo_ocupado", cupo_ocupado_actual + num_nuevos)
 
-        # Persistir
-        self._persistir_inscripcion(nueva_inscripcion)
-
+        # El servicio no persiste: devuelve la inscripción para que la capa de aplicación la guarde una sola vez
         return nueva_inscripcion
