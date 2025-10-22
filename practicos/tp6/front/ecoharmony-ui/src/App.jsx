@@ -49,6 +49,14 @@ function capFirst(s) {
   return s.charAt(0).toLocaleUpperCase() + s.slice(1);
 }
 
+// 💡 CAMBIO AÑADIDO: Función para pasar fecha a formato DD/MM/AAAA
+function toDDMMYYYY(isoDate) {
+  if (!isoDate) return "";
+  // El split original produce [Y, M, D]
+  const [y, m, d] = isoDate.split("-");
+  // Formato: DD/MM/AAAA
+  return `${d}/${m}/${y}`;
+}
 
 function pad(n){ return String(n).padStart(2, "0"); }
 function toISODate(d){ return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
@@ -369,8 +377,9 @@ export default function App() {
         const result = await apiInscribirse(payload);
 
         if (result) {
+            // 💡 CAMBIO: Aplicar toDDMMYYYY al mensaje de éxito en App (opcional, pero mejorado)
             setOkMsg(
-              `¡Inscripción confirmada! ${participantes.length} lugar(es) reservado(s) para ${actividad} el ${fechaISO} a las ${hora}.`
+              `¡Inscripción confirmada! ${participantes.length} lugar(es) reservado(s) para ${actividad} el ${toDDMMYYYY(fechaISO)} a las ${hora}.`
             );
         }
     }
@@ -636,7 +645,9 @@ function Step1({
     );
   }
 
-
+  // 💡 CAMBIO AÑADIDO: Conversión a formato DD/MM/AAAA para la visualización del helper
+  const displayTodayDDMMYYYY = toDDMMYYYY(todayISO);
+  const displayMaxDDMMYYYY = toDDMMYYYY(maxISO);
 
 
   return (
@@ -667,7 +678,8 @@ function Step1({
           {!!fechaErr && <div className="err">{fechaErr}</div>}
           {!fechaErr && (
             <p className="helper">
-              Podés inscribirte desde <b>{todayISO}</b> hasta <b>{maxISO}</b>. No se permiten Lunes ni festivos (01/01, 25/12).
+              {/* 💡 CAMBIO: Usar las variables formateadas DD/MM/AAAA */}
+              Podés inscribirte desde <b>{displayTodayDDMMYYYY}</b> hasta <b>{displayMaxDDMMYYYY}</b>. No se permiten Lunes ni festivos (01/01, 25/12).
             </p>
           )}
         </div>
@@ -864,7 +876,7 @@ function Step3({
       <div className="field">
         <label>Resumen</label>
         <div className="card" style={{ padding: "12px", borderRadius: "12px" }}>
-          <b>{capFirst(actividad)}</b> — {fechaISO} a las {hora}
+          <b>{capFirst(actividad)}</b> — {toDDMMYYYY(fechaISO)} a las {hora}
           <br />
           {participantes.length} participante(s).
         </div>
