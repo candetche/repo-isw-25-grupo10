@@ -130,15 +130,34 @@ class ServicioInscripcion:
 
         # edad > 0 y <= 150 en general para todas las actividades
         for p in participantes:
-            if getattr(p, "edad", None) is None or p.edad < 0 or p.edad > 150:
-                raise ErrorRestriccionEdad("Edad inválida: debe ser mayor a 0 y no superar 150.")
+            raw = getattr(p, "edad", None)
+            try:
+                edad_val = int(raw)
+            except (TypeError, ValueError):
+                raise ErrorRestriccionEdad("Edad inválida: debe ser un número entero entre 0 y 150.")
+            if edad_val < 0 or edad_val > 150:
+                raise ErrorRestriccionEdad("Edad inválida: debe ser mayor o igual a 0 y no superar 150.")
+            # Normalizar el atributo para usos posteriores
+            try:
+                p.edad = edad_val
+            except Exception:
+                pass
 
         # 9) Restricción de edad
         if reglas and reglas.get("edad_minima") is not None:
-            edad_min = reglas.get("edad_minima")
+            try:
+                edad_min = int(reglas.get("edad_minima"))
+            except (TypeError, ValueError):
+                edad_min = 0
             for p in participantes:
-                if getattr(p, "edad", None) is None or p.edad < edad_min:
+                raw = getattr(p, "edad", None)
+                try:
+                    edad_val = int(raw)
+                except (TypeError, ValueError):
                     raise ErrorRestriccionEdad("Al menos un participante no cumple la edad mínima requerida.")
+                if edad_val < edad_min:
+                    raise ErrorRestriccionEdad("Al menos un participante no cumple la edad mínima requerida.")
+
 
         # 10) Choque de horario con inscripciones existentes
         # Suponemos que repo.inscripciones es lista de Inscripcion o que existen métodos para listar

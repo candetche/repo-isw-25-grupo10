@@ -316,9 +316,9 @@ export default function App() {
       }
       if (!/^\d{6,10}$/.test(dniNorm))
         errs.push(`Fila ${idx + 1}: DNI debe tener 6 a 10 dígitos`);
-      if (!Number.isFinite(edadNum) || edadNum <= 0 || edadNum > 150)
+      if (!Number.isFinite(edadNum) || edadNum < 0 || edadNum > 150)
         errs.push(`Fila ${idx + 1}: edad inválida`);
-      if (edadNum > 0 && Number.isFinite(edadMinima) && edadMinima > 0 && edadNum < edadMinima)
+      if (Number.isFinite(edadMinima) && edadMinima > 0 && edadNum < edadMinima)
         errs.push(`Fila ${idx + 1}: edad mínima para ${actividad} es ${edadMinima}`);
       if (requiereTalle && !p.talle)
         errs.push(`Fila ${idx + 1}: talle es obligatorio en ${actividad}`);
@@ -422,7 +422,6 @@ export default function App() {
           <h1 className="h1">Inscripción a Actividad</h1>
           <p className="sub">EcoHarmony Park</p>
         </div>
-        
       </div>
 
       <div className="card">
@@ -791,7 +790,7 @@ function Step2({ actividad, fechaISO, hora, participantes, setParticipantes, act
     if (field === "edad") {
       const n = Number(nextVal);
       let msg = "";
-      if (!Number.isFinite(n) || n <= 0) msg = "La edad debe ser mayor a 0.";
+      if (!Number.isFinite(n) || n < 0) msg = "La edad debe ser mayor o igual a 0.";
       else if (n > 150) msg = "La edad no puede ser mayor a 150.";
       setAgeWarns(prev => ({ ...prev, [i]: msg }));
     }
