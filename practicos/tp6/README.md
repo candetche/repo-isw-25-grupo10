@@ -37,13 +37,14 @@ Si la Opción A falla debido a problemas con el PATH, utiliza:
 ```bash
 python -m pytest -v back/tests/test_inscripcion.py
  ```
+---
 
-4. Ejecución del Programa
+## 4. Ejecución del Programa
 
 El proyecto se divide en dos partes: backend (API) y frontend (interfaz de usuario).
 Ambos deben ejecutarse de forma independiente en terminales separadas.
 
-🖥️ Backend (FastAPI con Uvicorn)
+# 🖥️ Backend (FastAPI con Uvicorn)
 
 Abre una terminal en la carpeta raíz del proyecto:
 
@@ -66,7 +67,7 @@ Swagger UI: http://127.0.0.1:8000/docs
 
 Redoc: http://127.0.0.1:8000/redoc
 
-🌐 Frontend (React + Vite)
+# 🌐 Frontend (React + Vite)
 
 Abre una nueva terminal en la carpeta del frontend:
 
@@ -87,7 +88,7 @@ El sitio estará disponible en:
 
 http://localhost:5173
 
-🔄 Integración entre Front y Back
+# 🔄 Integración entre Front y Back
 
 El frontend se comunica con la API en http://127.0.0.1:8000.
 Asegúrate de tener ambos servidores corriendo simultáneamente para que las funcionalidades de inscripción funcionen correctamente.
