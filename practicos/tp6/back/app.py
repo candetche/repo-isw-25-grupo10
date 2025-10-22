@@ -134,8 +134,19 @@ def inscribirse(payload: InscripcionIn):
         nuevo_disponible = max(0, cap_max - getattr(turno, "cupo_ocupado", 0))
         repo_turno.actualizar_cupo(turno.id, nuevo_disponible)
 
+        # 6️⃣ Enviar comprobante con N° de inscripción
+        try:
+            servicio_correo.enviar_comprobante(inscripcion, payload.email, id_inscripcion=inscripcion_id)
+        except Exception as e:
+            # Loguear pero no romper la respuesta de éxito
+            print(f"Advertencia: No se pudo enviar el correo de comprobante. Error: {e}")
+
         # No insertar nuevamente visitantes aquí: ya se insertaron en InscripcionRepo.guardar()
-        return {"ok": True, "mensaje": f"Inscripción confirmada para {payload.actividad} el {payload.fecha} a las {payload.hora}"}
+        return {
+            "ok": True,
+            "id_inscripcion": inscripcion_id,
+            "mensaje": f"Inscripción confirmada para {payload.actividad} el {payload.fecha} a las {payload.hora}",
+        }
 
     except (
         ErrorSinCupo, ErrorTerminosNoAceptados, ErrorHorarioInvalido, ErrorFaltaTalle,

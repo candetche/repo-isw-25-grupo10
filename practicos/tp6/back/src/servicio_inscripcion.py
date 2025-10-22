@@ -128,6 +128,11 @@ class ServicioInscripcion:
                 if getattr(p, "talle", None) is None:
                     raise ErrorFaltaTalle("La actividad requiere talle de vestimenta para todos los participantes.")
 
+        # edad > 0 y <= 150 en general para todas las actividades
+        for p in participantes:
+            if getattr(p, "edad", None) is None or p.edad < 0 or p.edad > 150:
+                raise ErrorRestriccionEdad("Edad inválida: debe ser mayor a 0 y no superar 150.")
+
         # 9) Restricción de edad
         if reglas and reglas.get("edad_minima") is not None:
             edad_min = reglas.get("edad_minima")
@@ -183,15 +188,5 @@ class ServicioInscripcion:
         # Si el turno está en el mapa local, actualizar referencia
         if turno.id in self.turnos_disponibles:
             self.turnos_disponibles[turno.id].cupo_ocupado = getattr(turno, "cupo_ocupado", cupo_ocupado_actual + num_nuevos)
-
-        # 11) ENVÍO DEL COMPROBANTE DE INSCRIPCIÓN
-        try:
-            # Llamamos al servicio inyectado para enviar el comprobante
-            self.servicio_correo.enviar_comprobante(nueva_inscripcion, email_contacto)
-        except ErrorEnvioCorreo as e:
-            # Si el mail falla, generalmente NO se revierte la inscripción,
-            print(f"Advertencia: Falló el envío del comprobante al correo {email_contacto}. Error: {e}")
-        except Exception as e:
-            print(f"Error inesperado durante el envío de correo: {e}")
 
         return nueva_inscripcion
