@@ -114,8 +114,8 @@ def inscribirse(payload: InscripcionIn):
         # 4️⃣ Servicio principal
         # --- Inicializar servicio de correo ---
         servicio_correo = ServicioCorreo(
-            remitente="manupereiraduarte@gmail.com",
-            password_app="zjwh fgmg qyuq vtyv"  # 👈 la clave de aplicación de Gmail
+            remitente="inscripcionesecoharmonypark@gmail.com",
+            password_app="odqn rlpj ntjl azud"  # 👈 la clave de aplicación de Gmail
         )
         # obtener inscripciones previas desde la BD
         inscripciones_previas = repo_insc.obtener_todas() if hasattr(repo_insc, "obtener_todas") else []
