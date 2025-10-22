@@ -1,7 +1,7 @@
 import pytest
 from datetime import date, time, timedelta
 from back.src.servicio_inscripcion import ServicioInscripcion
-from back.src.repositorio import RepositorioEnMemoria
+from back.src.repositorios.base import RepositorioEnMemoria
 from back.src.modelos.visitante import Visitante
 from back.src.modelos.turno import Turno
 from back.src.modelos.inscripcion import Inscripcion
@@ -33,7 +33,7 @@ def setup_actividades():
 def setup_inscripcion(setup_actividades):
     """Define el estado inicial dinámico del sistema para todas las pruebas."""
 
-    FECHA_HOY = date.today()
+    FECHA_HOY = date(2025, 10, 15)
     FECHA_AYER = FECHA_HOY - timedelta(days=1)
     dias_hasta_lunes = (0 - FECHA_HOY.weekday() + 7) % 7
     FECHA_LUNES_CERRADO = FECHA_HOY + timedelta(days=dias_hasta_lunes if dias_hasta_lunes != 0 else 7)  # Evita el lunes de hoy si es hoy
@@ -69,7 +69,7 @@ def setup_inscripcion(setup_actividades):
     repo = RepositorioEnMemoria(inscripciones=[inscripcion_ana])
 
     # INICIALIZAR SERVICIO
-    servicio = ServicioInscripcion(setup_actividades, turnos_disponibles, repo)
+    servicio = ServicioInscripcion(setup_actividades, turnos_disponibles, repo, fecha_actual=FECHA_HOY)
 
     return {
         "servicio": servicio,
@@ -189,9 +189,10 @@ def test_inscripcion_sin_talle_requerido_falla(setup_inscripcion):
 def test_inscripcion_edad_invalida_falla(setup_inscripcion):
     """Test 7: Probar inscribirse a una actividad seleccionando una edad inválida (falla)."""
     s = setup_inscripcion
+    FECHA_HOY = date(2025, 10, 15)
 
     # Palestra tiene edad mínima 12. Fede tiene 11 (v_fede_edad_11).
-    turno_palestra_con_cupo = Turno(id=201, actividad_nombre="Palestra", fecha=date.today(), hora=time(16, 0),
+    turno_palestra_con_cupo = Turno(id=201, actividad_nombre="Palestra", fecha=FECHA_HOY, hora=time(16, 0),
                                     cupo_ocupado=0)
 
     with pytest.raises(ErrorRestriccionEdad):
@@ -256,8 +257,8 @@ def test_inscripcion_multiple_sin_cupo_falla(setup_inscripcion):
             email_contacto=s['EMAIL_VALIDO']
         )
 
-
-def test_inscripcion_dia_lunes_falla(setup_inscripcion):
+#TEST 11
+def test_inscripcion_dia_parque_cerrado_falla(setup_inscripcion):
     """Probar inscribirse a una actividad cuya fecha de inicio caiga en Lunes (falla)."""
     s = setup_inscripcion
 
@@ -270,7 +271,7 @@ def test_inscripcion_dia_lunes_falla(setup_inscripcion):
         )
 
 
-# TEST 13 (MODIFICADO)
+# TEST 12 (MODIFICADO)
 def test_con_inscripcion_fecha_pasada_falla(setup_inscripcion):
     """Probar inscribirse a una actividad cuya fecha ya ocurrió (falla)."""
     s = setup_inscripcion
@@ -283,7 +284,7 @@ def test_con_inscripcion_fecha_pasada_falla(setup_inscripcion):
             email_contacto=s['EMAIL_VALIDO']
         )
 
-# TEST 14
+# TEST 13
 def test_inscripcion_con_anticipacion_excesiva_falla(setup_inscripcion):
     """Probar inscribirse a una actividad cuya fecha de inicio sea 3 o más días después de la fecha actual (falla)."""
     s = setup_inscripcion
@@ -296,7 +297,7 @@ def test_inscripcion_con_anticipacion_excesiva_falla(setup_inscripcion):
             email_contacto=s['EMAIL_VALIDO']
         )
 
-# TEST 15
+# TEST 14
 def test_inscripcion_con_email_invalido_falla(setup_inscripcion):
     """Probar inscribirse con un email de contacto que no tiene formato válido (falla)."""
     s = setup_inscripcion
