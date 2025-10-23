@@ -1,0 +1,57 @@
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.cache/
+*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================================================
+# Config / Dependencias
+# =========================================================
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# =========================================================
+# IDEs / SO / Herramientas
+# =========================================================
+# VSCode
+.vscode/*
+!.vscode/extensions.json
+
+# JetBrains / WebStorm / PyCharm / IntelliJ
+.idea/
+*.iml
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Otros editores / entornos
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# =========================================================
+# Tests / Builds temporales
+# =========================================================
+coverage/
+*.tsbuildinfo
+
+# =========================================================
+# Archivos personales o temporales
+# =========================================================
+.env
+.env.local
+.env.*.local

@@ -12,8 +12,9 @@
 repo-isw-25-grupo10
 │── material-de-clases
 |    │── bibliografia
-|    └── presentaciones-clases
-|    └── templates-para-practicos-y-parciales
+|    │── presentaciones-clases
+|    │── templates para practicos y parciales
+|    └── resumen
 │── README.md
 │── planificacion
 │
@@ -43,6 +44,7 @@ repo-isw-25-grupo10
 - Bibliografia
 - Presentaciones de clases
 - Templates para practicos y parciales
+- Resumen completo de la materia
 
 ## Reglas de Nombrado
 
@@ -57,7 +59,7 @@ Nombres descriptivos en minúscula y palabras separadas por guión medio (-).
 | Presentacion TP       | `presentacion-tp<N>.<extensión> ` |
 | Codigo fuente         | `nombre.<extensión>`               |
 | Manual de instalación | `manual-tp<N>.md`                 |
-
+| Resumen completo de la materia | `resumen.pdf`                 |
 
 **Convención de nombrado de commits:**
 Los mensajes de commit deben seguir el siguiente formato:
