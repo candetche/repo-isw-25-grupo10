@@ -308,6 +308,9 @@ export default function App() {
 
       // Reglas existentes
       if (!nombreOk) errs.push(`Fila ${idx + 1}: nombre es requerido`);
+      // Nueva regla: edad es requerida (no permitir campo vacío)
+      if (String(p.edad ?? "").trim() === "")
+        errs.push(`Fila ${idx + 1}: edad es requerida`);
       if (p.nombre) {
         const nombreStr = String(p.nombre);
         const soloLetrasYEspacios = /^[\p{L}\s]+$/u.test(nombreStr);
@@ -456,6 +459,7 @@ export default function App() {
             regs={regs}
             actividades={actividades}
             turnos={turnos}
+            openModal={openModal}
 
           />
         )}
@@ -574,6 +578,7 @@ function Step1({
   regs,
   actividades,
   turnos,
+  openModal,
 }) {
   const [err, setErr] = useState("");
 
@@ -674,6 +679,21 @@ function Step1({
   const displayMaxDDMMYYYY = toDDMMYYYY(maxISO);
 
 
+  // Mostrar modal cuando hoy no tiene horarios futuros disponibles
+  const closedShownRef = React.useRef(false);
+  React.useEffect(() => {
+    const isToday = fechaISO === todayISO;
+    const noFutureSlots = availableSlots.length === 0;
+    const canEvaluate = actividad && fechaISO && !fechaErr;
+    if (isToday && noFutureSlots && canEvaluate && !closedShownRef.current) {
+      closedShownRef.current = true;
+      openModal("Parque cerrado", "El parque en estos momentos se encuentra cerrado.");
+    }
+    if (!isToday || !noFutureSlots || !canEvaluate) {
+      closedShownRef.current = false;
+    }
+  }, [actividad, fechaISO, availableSlots.length, fechaErr, todayISO, openModal]);
+
   return (
     <>
       <div className="row">
@@ -724,9 +744,6 @@ function Step1({
           </select>
           {actividad && fechaISO && hora && !fechaErr && (
             <p className="helper">Quedan <b>{Math.max(0, cuposRestantes)}</b> cupos para este horario.</p>
-          )}
-          {fechaISO === todayISO && availableSlots.length === 0 && !fechaErr && (
-            <div className="err">No quedan horarios futuros disponibles para hoy. Elegí mañana o pasado.</div>
           )}
           {actividad && fechaISO && !fechaErr && availableSlots.length === 0 && (
             <div className="err">No quedan horarios con cupos disponibles para esta fecha. Probá otra fecha.</div>
